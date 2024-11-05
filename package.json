@@ -1,0 +1,22 @@
+{
+  "name": "cc-bangkit-dummy",
+  "version": "1.0.0",
+  "description": "dummy api for bangkit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fitrahidayaat/cc-bangkit-dummy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fitrahidayaat/cc-bangkit-dummy/issues"
+  },
+  "homepage": "https://github.com/fitrahidayaat/cc-bangkit-dummy#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
