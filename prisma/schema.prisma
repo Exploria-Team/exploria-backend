@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(uuid())
   name     String
   email    String @unique
   password String
@@ -22,5 +22,28 @@ model User {
   createdAt              DateTime @default(now())
   updatedAt              DateTime @default(now())
 
+  profilePictureUrl      String?   
+  birthdate              DateTime?
+
+  favorites              Favorite[]
+
   @@map("users") //@@map is used to give a custom name to the database table
+}
+
+model Favorite {
+  id            String       @id @default(uuid())
+  destinationId String
+  userId        String       
+  date          DateTime     @default(now())
+  
+  user          User         @relation(fields: [userId], references: [id])
+  destination   Destination  @relation(fields: [destinationId], references: [id])
+}
+
+model Destination {
+  id           String   @id @default(uuid())
+  name         String
+  description  String
+  
+  favorites    Favorite[]
 }
