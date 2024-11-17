@@ -19,35 +19,51 @@ model User {
   email    String @unique
   password String
 
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 
-  profilePictureUrl      String?   
-  birthdate              DateTime?
+  profilePictureUrl String?
+  birthdate         DateTime?
 
-  favorites              Favorite[]
+  favorites Favorite[]
+  reviews   Review[]
 
   @@map("users") //@@map is used to give a custom name to the database table
 }
 
 model Favorite {
-  id            String       @id @default(uuid())
+  id            String   @id @default(uuid())
   destinationId String
-  userId        String       
-  date          DateTime     @default(now())
-  
-  user          User         @relation(fields: [userId], references: [id])
-  destination   Destination  @relation(fields: [destinationId], references: [id])
+  userId        String
+  date          DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  destination Destination @relation(fields: [destinationId], references: [id])
 
   @@unique([userId, destinationId])
 }
 
 model Destination {
-  id           String   @id @default(uuid())
-  name         String
-  description  String
-  averageRating  Float
-  lat            Float
-  lon            Float
-  favorites    Favorite[]
+  id            String     @id @default(uuid())
+  name          String
+  description   String
+  averageRating Float
+  lat           Float
+  lon           Float
+  favorites     Favorite[]
+  reviews       Review[]
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  userId        String
+  destinationId String
+  reviewText    String
+  rating        Int
+  reviewDate    DateTime
+
+  user        User        @relation(fields: [userId], references: [id])
+  destination Destination @relation(fields: [destinationId], references: [id])
+
+  @@map("reviews")
 }
