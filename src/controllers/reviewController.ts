@@ -33,7 +33,7 @@ export const getReviews = async (req: Request, res: Response) => {
             },
         });
 
-        res.json({
+        res.status(200).json({
             status_code: 200,
             data: reviews
         });
