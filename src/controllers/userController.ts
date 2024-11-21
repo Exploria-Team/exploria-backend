@@ -1,29 +1,50 @@
+import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import { prismaClient } from "../prismaClient";
+import { updateUserSchema, setFavoriteSchema } from "../schema/users";
+
+const prisma = new PrismaClient();
 
 export const updateUser = async (req: Request, res: Response) => {
     const userId = req.params.id;
-    const { name, email, birthdate } = req.body;
 
     try {
-        const user = await prismaClient.user.update({
+        const validatedData = updateUserSchema.parse(req.body);
+
+        const user = await prisma.user.update({
             where: { id: userId },
             data: {
-                name,
-                email,
-                birthdate: birthdate ? new Date(birthdate) : undefined,
+                name: validatedData.name,
+                email: validatedData.email,
+                birthdate: validatedData.birthdate
+                    ? new Date(validatedData.birthdate)
+                    : undefined,
             },
         });
-        res.json({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            profilePictureUrl: user.profilePictureUrl,
-            birthdate: user.birthdate,
+
+        res.status(200).json({
+            status_code: 200,
+            data: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                profilePictureUrl: user.profilePictureUrl,
+                birthdate: user.birthdate,
+            },
         });
     } catch (error) {
+        if (error.name === "ZodError") {
+            return res.status(400).json({
+                status_code: 400,
+                message: "Validation failed",
+                errors: error.errors,
+            });
+        }
+
         console.error("Error updating user:", error);
-        res.status(400).json({ error: "Failed to update user" });
+        res.status(500).json({
+            status_code: 500,
+            message: "Failed to update user",
+        });
     }
 };
 
@@ -31,47 +52,59 @@ export const getUser = async (req: Request, res: Response) => {
     const userId = req.params.id;
 
     try {
-        const user = await prismaClient.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: { id: userId },
         });
+
         if (user) {
-            res.json({
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                profilePictureUrl: user.profilePictureUrl,
-                birthdate: user.birthdate,
+            res.status(200).json({
+                status_code: 200,
+                data: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    profilePictureUrl: user.profilePictureUrl,
+                    birthdate: user.birthdate,
+                },
             });
         } else {
-            res.status(404).json({ error: "User not found" });
+            res.status(404).json({
+                status_code: 404,
+                message: "User not found",
+            });
         }
     } catch (error) {
         console.error("Error fetching user:", error);
-        res.status(500).json({ error: "Failed to fetch user data" });
+        res.status(500).json({
+            status_code: 500,
+            message: "Failed to fetch user data",
+        });
     }
 };
 
 export const setFavorite = async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const { destinationId } = req.body;
-
-    if (!destinationId) {
-        return res.status(400).json({ message: "Destination ID is required" });
-    }
+    const userId = req.user.id;
 
     try {
-        const existingFavorite = await prismaClient.favorite.findFirst({
+        const validatedData = setFavoriteSchema.parse(req.body);
+        const { destinationId } = validatedData;
+
+        const existingFavorite = await prisma.favorite.findFirst({
             where: { userId, destinationId },
         });
 
         if (existingFavorite) {
-            await prismaClient.favorite.delete({
+            await prisma.favorite.delete({
                 where: { id: existingFavorite.id },
             });
-            return res.json({ message: "Favorite removed" });
+
+            return res.status(200).json({
+                status_code: 200,
+                message: "Favorite removed",
+            });
         }
 
-        const newFavorite = await prismaClient.favorite.create({
+        const newFavorite = await prisma.favorite.create({
             data: {
                 userId,
                 destinationId,
@@ -79,9 +112,24 @@ export const setFavorite = async (req: Request, res: Response) => {
             },
         });
 
-        res.json({ message: "Favorite added", favorite: newFavorite });
+        res.status(201).json({
+            status_code: 201,
+            message: "Favorite added",
+            data: newFavorite,
+        });
     } catch (error) {
+        if (error.name === "ZodError") {
+            return res.status(400).json({
+                status_code: 400,
+                message: "Validation failed",
+                errors: error.errors,
+            });
+        }
+
         console.error("Error setting favorite:", error);
-        res.status(500).json({ message: "Failed to set favorite" });
+        res.status(500).json({
+            status_code: 500,
+            message: "Failed to set favorite",
+        });
     }
 };

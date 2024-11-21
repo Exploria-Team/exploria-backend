@@ -16,7 +16,7 @@ export const getReviews = async (req: Request, res: Response) => {
             });
         }
 
-        if (!destinationId || destinationId.trim() === "") {
+        if (isNaN(destinationId) || destinationId <= 0) {
             return res.status(400).json({
                 status_code: 400,
                 message: "Invalid destinationId parameter"
@@ -24,7 +24,7 @@ export const getReviews = async (req: Request, res: Response) => {
         }
 
         const reviews = await prisma.review.findMany({
-            where: { destinationId: destinationId }, // Keep destinationId as string
+            where: { destinationId }, // Keep destinationId as string
             take: limit,
             orderBy: { reviewDate: "desc" },
             include: {

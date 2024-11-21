@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const getDestinationByIdSchema = z.object({
-    id: z.string().uuid("Invalid destination ID format")
+    id: z.string().regex(/^\d+$/, "Invalid ID format").transform(Number),
 });
 
 export const searchDestinationsSchema = z.object({

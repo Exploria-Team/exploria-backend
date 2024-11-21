@@ -32,8 +32,8 @@ model User {
 }
 
 model Favorite {
-  id            String   @id @default(uuid())
-  destinationId String
+  id            Int      @id @default(autoincrement())
+  destinationId Int
   userId        String
   date          DateTime @default(now())
 
@@ -41,10 +41,12 @@ model Favorite {
   destination Destination @relation(fields: [destinationId], references: [id])
 
   @@unique([userId, destinationId])
+
+  @@map("favorites")
 }
 
 model Destination {
-  id            String     @id @default(uuid())
+  id            Int        @id @default(autoincrement())
   name          String
   description   String
   averageRating Float
@@ -52,12 +54,14 @@ model Destination {
   lon           Float
   favorites     Favorite[]
   reviews       Review[]
+
+  @@map("destinations")
 }
 
 model Review {
   id            String   @id @default(uuid())
   userId        String
-  destinationId String
+  destinationId Int
   reviewText    String
   rating        Int
   reviewDate    DateTime

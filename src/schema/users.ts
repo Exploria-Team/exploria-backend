@@ -6,17 +6,18 @@ export const signUpSchema = z.object({
     password: z.string().min(6),
 });
 
-export const AddressSchema = z.object({
-    lineOne: z.string(),
-    lineTwo: z.string().nullable(),
-    pincode: z.number().min(6),
-    country: z.string(),
-    city: z.string(),
-    userId: z.number(),
+export const updateUserSchema = z.object({
+    name: z.string().min(1, "Name is required").optional(),
+    email: z.string().email("Invalid email format").optional(),
+    birthdate: z.string().refine(
+        (date) => {
+            const parsedDate = Date.parse(date);
+            return !isNaN(parsedDate);
+        },
+        { message: "Invalid date format" }
+    ).optional(),
 });
 
-export const updateUserSchema = z.object({
-    name: z.string().nullable(),
-    defaultShippingAddress: z.string().nullable(),
-    defaultBillingAddress: z.string().nullable(),
+export const setFavoriteSchema = z.object({
+    destinationId: z.number({ required_error: "Destination ID is required" }),
 });
