@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import { updateUserSchema, setFavoriteSchema } from "../schema/users";
+import { updateUserSchema, setFavoriteSchema, setUserPreferencesSchema } from "../schema/users";
 
 const prisma = new PrismaClient();
 
@@ -130,6 +130,72 @@ export const setFavorite = async (req: Request, res: Response) => {
         res.status(500).json({
             status_code: 500,
             message: "Failed to set favorite",
+        });
+    }
+};
+
+export const getUserPreferences = async (req: Request, res: Response) => {
+    const userId = req.user.id;
+
+    try {
+        const preferences = await prisma.preference.findMany({
+            where: { userId },
+            include: { category: true },
+        });
+
+        if (!preferences.length) {
+            return res.status(404).json({
+                status_code: 404,
+                message: "No preferences found",
+            });
+        }
+
+        res.status(200).json({
+            status_code: 200,
+            data: preferences.map((preference) => ({
+                id: preference.category.id,
+                name: preference.category.name,
+                group: preference.category.group,
+            })),
+        });
+    } catch (error) {
+        console.error("Error fetching user preferences:", error);
+        res.status(500).json({
+            status_code: 500,
+            message: "Failed to fetch user preferences",
+        });
+    }
+};
+
+export const setUserPreferences = async (req: Request, res: Response) => {
+    const userId = req.user.id;
+
+    try {
+        const validatedData = setUserPreferencesSchema.parse(req.body);
+        const { preferences } = validatedData;
+
+        await prisma.preference.createMany({
+            data: preferences.map((categoryId) => ({ userId, categoryId })),
+            skipDuplicates: true,
+        });
+
+        res.status(201).json({
+            status_code: 201,
+            message: "Preferences set successfully",
+        });
+    } catch (error) {
+        if (error.name === "ZodError") {
+            return res.status(400).json({
+                status_code: 400,
+                message: "Validation failed",
+                errors: error.errors,
+            });
+        }
+
+        console.error("Error setting preferences:", error);
+        res.status(500).json({
+            status_code: 500,
+            message: "Failed to set preferences",
         });
     }
 };

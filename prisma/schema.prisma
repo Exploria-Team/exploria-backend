@@ -24,6 +24,7 @@ model User {
 
   profilePictureUrl String?
   birthdate         DateTime?
+  preferences       Preference[]
 
   favorites Favorite[]
   reviews   Review[]
@@ -70,4 +71,25 @@ model Review {
   destination Destination @relation(fields: [destinationId], references: [id])
 
   @@map("reviews")
+}
+
+model Category {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  group    String
+  preferences Preference[]
+  
+  @@map("categories")
+}
+
+model Preference {
+  id          Int     @id @default(autoincrement())
+  categoryId  Int
+  userId      String
+  
+  category    Category @relation(fields: [categoryId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([categoryId, userId])
+  @@map("preferences")
 }
