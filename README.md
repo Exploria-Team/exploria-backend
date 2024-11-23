@@ -1,4 +1,4 @@
-# Exploria Machine Learning Repository
+# Exploria Backend Repository
 
 Exploria is a machine learning project designed to enhance travel experiences while promoting sustainable tourism in Indonesia. By leveraging advanced technologies like AI and machine learning, this system provides smart recommendations tailored to individual preferences, helping travelers explore Indonesia responsibly and meaningfully.
 
