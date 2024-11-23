@@ -55,6 +55,8 @@ model Destination {
   lon           Float
   favorites     Favorite[]
   reviews       Review[]
+  city          City     @relation(fields: [cityId], references: [id])
+  cityId        Int
 
   @@map("destinations")
 }
@@ -83,7 +85,7 @@ model Category {
 }
 
 model Preference {
-  id          Int     @id @default(autoincrement())
+  id          String   @id @default(uuid())
   categoryId  Int
   userId      String
   
@@ -92,4 +94,23 @@ model Preference {
 
   @@unique([categoryId, userId])
   @@map("preferences")
+}
+
+model City {
+  id           Int      @id @default(autoincrement())
+  name         String
+  tourGuides   TourGuide[]  
+  destinations Destination[] 
+}
+
+model TourGuide {
+  id              String   @id @default(uuid())
+  name            String
+  waNumber        String
+  city            City     @relation(fields: [cityId], references: [id])
+  cityId          Int
+  totalRating     Int
+  totalUserRating Int
+  price           Int
+  verified        Boolean
 }
