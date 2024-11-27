@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export const getReviews = async (req: Request, res: Response) => {
     try {
         const limit = parseInt(req.params.limit, 10);
-        const destinationId = parseInt(req.params.destination_id);
+        const destinationId = parseInt(req.params.destinationId);
 
         if (isNaN(limit) || limit <= 0) {
             return res.status(400).json({

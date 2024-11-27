@@ -47,7 +47,7 @@ export const addTravelPlan = async (req: Request, res: Response) => {
 
 export const getPlanDestinations = async (req: Request, res: Response) => {
     try {
-        const planId = req.params.plan_id;
+        const planId = req.params.planId;
     
         const planDestinations = await prisma.planDestination.findMany({
             where: { planId },

@@ -5,7 +5,7 @@ import { getTravelPlan, getPlanDestinations, addTravelPlan, addPlanDestination }
 const travelPlanRoutes = Router();
 
 travelPlanRoutes.get("/", authMiddleware, getTravelPlan);
-travelPlanRoutes.get("/destination/:plan_id", authMiddleware, getPlanDestinations);
+travelPlanRoutes.get("/destination/:planId", authMiddleware, getPlanDestinations);
 travelPlanRoutes.post("/", authMiddleware, addTravelPlan);
 travelPlanRoutes.post("/destination", authMiddleware, addPlanDestination);
 
