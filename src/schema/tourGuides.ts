@@ -1,13 +1,7 @@
 import { z } from "zod";
 
 export const getTourGuidesSchema = z.object({
-    city: z.string().optional(),
-    verified: z
-        .union([
-            z.boolean(),
-            z.string().transform((val) => val === "true"),
-        ])
-        .optional(),
+    search: z.string().optional(),
 });
 
 export const getTourGuideByIdSchema = z.object({

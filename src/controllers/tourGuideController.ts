@@ -1,21 +1,44 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { getTourGuidesSchema, getTourGuideByIdSchema } from "../schema/tourGuides";
+import { group } from "console";
 
 const prisma = new PrismaClient();
 
 export const getTourGuides = async (req: Request, res: Response) => {
     try {
-        const { city, verified } = getTourGuidesSchema.parse(req.query);
+        const { search } = getTourGuidesSchema.parse(req.query);
 
         const tourGuides = await prisma.tourGuide.findMany({
             where: {
-                cityId: city ? Number(city) : undefined,
-                verified: verified ?? undefined,
+                OR: [
+                    { name: { contains: search, mode: "insensitive" } },
+                    {
+                        city: {
+                            name: { contains: search, mode: "insensitive" },
+                        },
+                    },
+                    {
+                        preferences: {
+                            some: {
+                                category: {
+                                    name: { contains: search, mode: "insensitive" },
+                                },
+                            },
+                        },
+                    },
+                ],
             },
             include: {
                 city: {
                     select: { name: true },
+                },
+                preferences: {
+                    include: {
+                        category: {
+                            select: { id: true, name: true, group: true },
+                        },
+                    },
                 },
             },
         });
@@ -30,12 +53,8 @@ export const getTourGuides = async (req: Request, res: Response) => {
         const response = tourGuides.map((guide) => ({
             id: guide.id,
             name: guide.name,
-            waNumber: guide.waNumber,
-            location: guide.city.name, // Include city name directly
-            totalRating: guide.totalRating,
-            totalUserRating: guide.totalUserRating,
+            location: guide.city.name,
             price: guide.price,
-            verified: guide.verified,
         }));
 
         res.status(200).json({
@@ -50,10 +69,10 @@ export const getTourGuides = async (req: Request, res: Response) => {
                 errors: error.errors,
             });
         }
-        console.error("Error fetching tour guides:", error);
+        console.error("Error searching tour guides:", error);
         res.status(500).json({
             status_code: 500,
-            message: "Failed to fetch tour guides",
+            message: "Failed to search tour guides",
         });
     }
 };
@@ -67,6 +86,13 @@ export const getTourGuideById = async (req: Request, res: Response) => {
             include: {
                 city: {
                     select: { name: true },
+                },
+                preferences: {
+                    include: {
+                        category: {
+                            select: { id: true, name: true, group: true },
+                        },
+                    },
                 },
             },
         });
@@ -83,10 +109,12 @@ export const getTourGuideById = async (req: Request, res: Response) => {
             name: tourGuide.name,
             waNumber: tourGuide.waNumber,
             location: tourGuide.city.name,
-            totalRating: tourGuide.totalRating,
-            totalUserRating: tourGuide.totalUserRating,
             price: tourGuide.price,
-            verified: tourGuide.verified,
+            preferences: tourGuide.preferences.map((preference) => ({
+                id: preference.category.id,
+                name: preference.category.name,
+                group: preference.category.group,
+            })),
         };
 
         res.status(200).json({

@@ -82,10 +82,12 @@ model Category {
 model Preference {
   id          String   @id @default(uuid()) @map("id")
   categoryId  Int      @map("category_id")
-  userId      String   @map("user_id")
+  userId      String?  @map("user_id")
+  tourGuideId String?  @map("tour_guide_id")
 
-  category    Category @relation(fields: [categoryId], references: [id])
-  user        User     @relation(fields: [userId], references: [id])
+  category    Category    @relation(fields: [categoryId], references: [id])
+  user        User?       @relation(fields: [userId], references: [id])
+  tourGuide   TourGuide?  @relation(fields: [tourGuideId], references: [id])
 
   @@unique([categoryId, userId])
   @@map("preferences")
@@ -105,11 +107,8 @@ model TourGuide {
   name              String  @map("name")
   waNumber          String  @map("wa_number")
   cityId            Int     @map("city_id")
-  totalRating       Int     @map("total_rating")
-  totalUserRating   Int     @map("total_user_rating")
   price             Int     @map("price")
-  verified          Boolean @map("verified")
-
+  preferences       Preference[]
   city              City    @relation(fields: [cityId], references: [id])
 
   @@map("tour_guides")
