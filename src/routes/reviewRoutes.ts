@@ -4,7 +4,7 @@ import { getReviews, createReview } from "../controllers/reviewController";
 
 const reviewRoutes = Router();
 
-reviewRoutes.get("/:limit", authMiddleware, getReviews);
+reviewRoutes.get("/:destination_id/:limit", authMiddleware, getReviews);
 reviewRoutes.post("/", authMiddleware, createReview);
 
 export default reviewRoutes;
