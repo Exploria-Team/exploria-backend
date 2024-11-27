@@ -82,6 +82,57 @@ export const getUser = async (req: Request, res: Response) => {
     }
 };
 
+export const getFavorites = async (req: Request, res: Response) => {
+    const userId = req.user.id;
+
+    try {
+        const favorites = await prisma.favorite.findMany({
+            where: { userId },
+            include: {
+                destination: {
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true,
+                        averageRating: true,
+                        city: {
+                            select: { name: true },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!favorites.length) {
+            return res.status(404).json({
+                status_code: 404,
+                message: "No favorites found",
+            });
+        }
+
+        res.status(200).json({
+            status_code: 200,
+            data: favorites.map((favorite) => ({
+                id: favorite.id,
+                destination: {
+                    id: favorite.destination.id,
+                    name: favorite.destination.name,
+                    description: favorite.destination.description,
+                    averageRating: favorite.destination.averageRating,
+                    city: favorite.destination.city.name,
+                },
+                date: favorite.date,
+            })),
+        });
+    } catch (error) {
+        console.error("Error fetching favorites:", error);
+        res.status(500).json({
+            status_code: 500,
+            message: "Failed to fetch favorites",
+        });
+    }
+};
+
 export const setFavorite = async (req: Request, res: Response) => {
     const userId = req.user.id;
 

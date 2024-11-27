@@ -13,6 +13,11 @@ export const getTourGuides = async (req: Request, res: Response) => {
                 cityId: city ? Number(city) : undefined,
                 verified: verified ?? undefined,
             },
+            include: {
+                city: {
+                    select: { name: true },
+                },
+            },
         });
 
         if (!tourGuides.length) {
@@ -22,9 +27,20 @@ export const getTourGuides = async (req: Request, res: Response) => {
             });
         }
 
+        const response = tourGuides.map((guide) => ({
+            id: guide.id,
+            name: guide.name,
+            waNumber: guide.waNumber,
+            location: guide.city.name, // Include city name directly
+            totalRating: guide.totalRating,
+            totalUserRating: guide.totalUserRating,
+            price: guide.price,
+            verified: guide.verified,
+        }));
+
         res.status(200).json({
             status_code: 200,
-            data: tourGuides,
+            data: response,
         });
     } catch (error) {
         if (error.name === "ZodError") {
@@ -62,9 +78,20 @@ export const getTourGuideById = async (req: Request, res: Response) => {
             });
         }
 
+        const response = {
+            id: tourGuide.id,
+            name: tourGuide.name,
+            waNumber: tourGuide.waNumber,
+            location: tourGuide.city.name,
+            totalRating: tourGuide.totalRating,
+            totalUserRating: tourGuide.totalUserRating,
+            price: tourGuide.price,
+            verified: tourGuide.verified,
+        };
+
         res.status(200).json({
             status_code: 200,
-            data: tourGuide,
+            data: response,
         });
     } catch (error) {
         if (error.name === "ZodError") {
