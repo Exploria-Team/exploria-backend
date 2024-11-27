@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
+import { addPlanDestinationSchema } from "../schema/travelPlan";
 
 const prisma = new PrismaClient();
 
@@ -21,7 +22,7 @@ export const getTravelPlan = async (req: Request, res: Response) => {
     }
 };
 
-export const setTravelPlan = async (req: Request, res: Response) => {
+export const addTravelPlan = async (req: Request, res: Response) => {
     try {
         const userId = req.user.id;
     
@@ -50,6 +51,9 @@ export const getPlanDestinations = async (req: Request, res: Response) => {
     
         const planDestinations = await prisma.planDestination.findMany({
             where: { planId },
+            include: {
+                destination: true
+            }
         });
     
         res.send(planDestinations);
@@ -62,11 +66,11 @@ export const getPlanDestinations = async (req: Request, res: Response) => {
     }
 };
 
-export const setPlanDestination = async (req: Request, res: Response) => {
+export const addPlanDestination = async (req: Request, res: Response) => {
     try {
-        const planId = req.body.planId;
-        const destinationId = req.body.destinationId;
-        const date = req.body.date;
+        const validatedData = addPlanDestinationSchema.parse(req.body);
+
+        const {planId, destinationId, date} = validatedData;
     
         const planDestination = await prisma.planDestination.create({
             data: {
@@ -81,6 +85,12 @@ export const setPlanDestination = async (req: Request, res: Response) => {
             data: planDestination
         });
     } catch(error) {
+        if (error.name === "ZodError") {
+            return res.status(400).json({
+                status_code: 400,
+                message: error.errors
+            });
+        }
         console.error("Error add plan destination", error);
         res.status(500).json({
             status_code: 500,
