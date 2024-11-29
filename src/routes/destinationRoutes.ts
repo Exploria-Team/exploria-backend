@@ -4,7 +4,7 @@ import { getDestinationById, searchDestinations } from "../controllers/destinati
 
 const destinationRoutes = Router();
 
-destinationRoutes.get("/search", authMiddleware, searchDestinations);
+destinationRoutes.get("/", authMiddleware, searchDestinations);
 destinationRoutes.get("/:id", authMiddleware, getDestinationById);
 
 export default destinationRoutes;

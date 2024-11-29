@@ -43,13 +43,13 @@ export const getDestinationById = async (req: Request, res: Response) => {
 
 export const searchDestinations = async (req: Request, res: Response) => {
     try {
-        const { text_search } = searchDestinationsSchema.parse(req.query);
+        const { search } = searchDestinationsSchema.parse(req.query);
 
         const destinations = await prisma.destination.findMany({
             where: {
                 OR: [
-                    { name: { contains: text_search, mode: "insensitive" } },
-                    { description: { contains: text_search, mode: "insensitive" } },
+                    { name: { contains: search, mode: "insensitive" } },
+                    { description: { contains: search, mode: "insensitive" } },
                 ],
             },
         });

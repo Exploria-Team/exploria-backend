@@ -5,5 +5,5 @@ export const getDestinationByIdSchema = z.object({
 });
 
 export const searchDestinationsSchema = z.object({
-    text_search: z.string().min(1, "Search query cannot be empty").optional()
+    search: z.string().min(1, "Search query cannot be empty").optional()
 });
