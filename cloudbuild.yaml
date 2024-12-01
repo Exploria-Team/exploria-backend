@@ -15,8 +15,6 @@ steps:
       - 'run'
       - 'deploy'
       - 'exploria-backend'
-      - '--image'
-      - 'gcr.io/$PROJECT_ID/exploria-backend'
       - '--platform'
       - 'managed'
       - '--region'
