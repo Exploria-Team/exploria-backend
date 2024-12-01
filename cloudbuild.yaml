@@ -8,6 +8,8 @@ steps:
     args: ['run', 'migrate']
     env:
       - 'DATABASE_URL=${_DATABASE_URL}'
+      - 'JWT_SECRET=${_JWT_SECRET}'
+      - 'PORT=${_PORT}'
 
   # Build & deploy to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
