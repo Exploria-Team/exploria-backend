@@ -1,0 +1,24 @@
+steps:
+  # Install dependencies
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+
+  # Run Prisma Migrate
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'migrate']
+
+  # Build & deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'exploria-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/exploria-backend'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'asia-southeast2'
+      - '--allow-unauthenticated'
+      - '--source'
+      - '.'  
