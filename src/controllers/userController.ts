@@ -11,13 +11,11 @@ export const updateUser = async (req: Request, res: Response) => {
         const validatedData = updateUserSchema.parse(req.body);
 
         const user = await prisma.user.update({
-            where: { id: userId },
+            where: { id: parseInt(userId) }, 
             data: {
                 name: validatedData.name,
                 email: validatedData.email,
-                birthdate: validatedData.birthdate
-                    ? new Date(validatedData.birthdate)
-                    : undefined,
+                age: validatedData.age, 
             },
         });
 
@@ -28,7 +26,7 @@ export const updateUser = async (req: Request, res: Response) => {
                 name: user.name,
                 email: user.email,
                 profilePictureUrl: user.profilePictureUrl,
-                birthdate: user.birthdate,
+                age: user.age,
             },
         });
     } catch (error) {
@@ -53,7 +51,7 @@ export const getUser = async (req: Request, res: Response) => {
 
     try {
         const user = await prisma.user.findUnique({
-            where: { id: userId },
+            where: { id: parseInt(userId) },
         });
 
         if (user) {
@@ -64,7 +62,7 @@ export const getUser = async (req: Request, res: Response) => {
                     name: user.name,
                     email: user.email,
                     profilePictureUrl: user.profilePictureUrl,
-                    birthdate: user.birthdate,
+                    age: user.age,
                 },
             });
         } else {
@@ -81,6 +79,7 @@ export const getUser = async (req: Request, res: Response) => {
         });
     }
 };
+
 
 export const getFavorites = async (req: Request, res: Response) => {
     const userId = req.user.id;

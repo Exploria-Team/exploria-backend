@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                String     @id @default(uuid()) @map("id")
+  id                Int        @id @default(autoincrement()) @map("id")
   name              String     @map("name")
   email             String     @unique @map("email")
   password          String     @map("password")
@@ -17,7 +17,7 @@ model User {
   updatedAt         DateTime   @default(now()) @map("updated_at")
 
   profilePictureUrl String?    @map("profile_picture_url")
-  birthdate         DateTime?  @map("birthdate")
+  age               Int?       @map("age")
   preferences       Preference[] 
   plans             Plan[]    
 
@@ -30,7 +30,7 @@ model User {
 model Favorite {
   id              Int          @id @default(autoincrement()) @map("id")
   destinationId   Int          @map("destination_id")
-  userId          String       @map("user_id")
+  userId          Int          @map("user_id")
   date            DateTime     @default(now()) @map("date")
 
   user            User         @relation(fields: [userId], references: [id])
@@ -41,28 +41,53 @@ model Favorite {
 }
 
 model Destination {
-  id                Int               @id @default(autoincrement()) @map("id")
-  name              String            @map("name")
-  description       String            @map("description")
-  averageRating     Float             @map("average_rating")
-  lat               Float             @map("lat")
-  lon               Float             @map("lon")
-  favorites         Favorite[]        
-  reviews           Review[]          
-  city              City              @relation(fields: [cityId], references: [id])
-  cityId            Int               @map("city_id")
-  planDestinations  PlanDestination[] 
+  id                    Int               @id @default(autoincrement()) @map("id")
+  name                  String            @map("name")
+  description           String            @map("description")
+  averageRating         Float             @map("average_rating")
+  lat                   Float             @map("lat")
+  lon                   Float             @map("lon")
+  entryFee              Int?              @map("price")
+  visitDurationMinutes  Int?              @map("time_minutes")
+  favorites             Favorite[]        
+  reviews               Review[]          
+  city                  City              @relation(fields: [cityId], references: [id])
+  cityId                Int               @map("city_id")
+  planDestinations      PlanDestination[]
+  categories            DestinationCategory[]
+  photos                DestinationPhoto[] 
 
   @@map("destinations")
 }
 
+model DestinationPhoto {
+  id              Int     @id @default(autoincrement()) @map("id")
+  destinationId   Int     @map("destination_id")
+  photoUrl        String  @map("photo_url")
+  destination     Destination @relation(fields: [destinationId], references: [id])
+
+  @@map("destination_photos")
+}
+
+model DestinationCategory {
+  id              Int       @id @default(autoincrement()) @map("id")
+  destinationId   Int       @map("destination_id")
+  categoryId      Int       @map("category_id")
+  
+  destination     Destination @relation(fields: [destinationId], references: [id])
+  category        Category    @relation(fields: [categoryId], references: [id])
+
+  @@unique([destinationId, categoryId])
+  @@map("destination_categories")
+}
+
 model Review {
   id              String     @id @default(uuid()) @map("id")
-  userId          String     @map("user_id")
+  userId          Int        @map("user_id")
   destinationId   Int        @map("destination_id")
   reviewText      String     @map("review_text")
   rating          Int        @map("rating")
-  reviewDate      DateTime   @map("review_date")
+  reviewDate      DateTime?   @map("review_date")
 
   user            User       @relation(fields: [userId], references: [id])
   destination     Destination @relation(fields: [destinationId], references: [id])
@@ -75,6 +100,8 @@ model Category {
   name        String       @unique @map("name")
   group       String       @map("group")
   preferences Preference[] 
+  destinations DestinationCategory[]
+  tourGuides  TourGuide[]
 
   @@map("categories")
 }
@@ -82,12 +109,10 @@ model Category {
 model Preference {
   id          String   @id @default(uuid()) @map("id")
   categoryId  Int      @map("category_id")
-  userId      String?  @map("user_id")
-  tourGuideId String?  @map("tour_guide_id")
+  userId      Int      @map("user_id")
 
   category    Category    @relation(fields: [categoryId], references: [id])
-  user        User?       @relation(fields: [userId], references: [id])
-  tourGuide   TourGuide?  @relation(fields: [tourGuideId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
 
   @@unique([categoryId, userId])
   @@map("preferences")
@@ -107,16 +132,22 @@ model TourGuide {
   name              String  @map("name")
   waNumber          String  @map("wa_number")
   cityId            Int     @map("city_id")
+  categoryId        Int     @map("category_id")
   price             Int     @map("price")
-  preferences       Preference[]
-  city              City    @relation(fields: [cityId], references: [id])
+  email             String  @unique @map("email")
+  gender            String  @map("gender")
+  verified          Boolean @map("verified")
+  bio               String  @map("bio")
+  city              City          @relation(fields: [cityId], references: [id])
+  category          Category      @relation(fields: [categoryId], references: [id])
+
 
   @@map("tour_guides")
 }
 
 model Plan {
   id        String  @id @default(uuid()) @map("id")
-  userId    String  @map("user_id")
+  userId    Int     @map("user_id")
   user      User    @relation(fields: [userId], references: [id])
 
   planDestinations PlanDestination[]

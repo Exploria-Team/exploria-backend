@@ -19,12 +19,8 @@ export const getTourGuides = async (req: Request, res: Response) => {
                         },
                     },
                     {
-                        preferences: {
-                            some: {
-                                category: {
-                                    name: { contains: search, mode: "insensitive" },
-                                },
-                            },
+                        category: {
+                            name: { contains: search, mode: "insensitive" },
                         },
                     },
                 ],
@@ -33,11 +29,11 @@ export const getTourGuides = async (req: Request, res: Response) => {
                 city: {
                     select: { name: true },
                 },
-                preferences: {
-                    include: {
-                        category: {
-                            select: { id: true, name: true, group: true },
-                        },
+                category: {
+                    select: {
+                        id: true,
+                        name: true,
+                        group: true,
                     },
                 },
             },
@@ -55,6 +51,13 @@ export const getTourGuides = async (req: Request, res: Response) => {
             name: guide.name,
             location: guide.city.name,
             price: guide.price,
+            category: {
+                id: guide.category.id,
+                name: guide.category.name,
+                group: guide.category.group,
+            },
+            verified: guide.verified,
+            bio: guide.bio,
         }));
 
         res.status(200).json({
@@ -87,11 +90,11 @@ export const getTourGuideById = async (req: Request, res: Response) => {
                 city: {
                     select: { name: true },
                 },
-                preferences: {
-                    include: {
-                        category: {
-                            select: { id: true, name: true, group: true },
-                        },
+                category: {
+                    select: {
+                        id: true,
+                        name: true,
+                        group: true,
                     },
                 },
             },
@@ -110,11 +113,13 @@ export const getTourGuideById = async (req: Request, res: Response) => {
             waNumber: tourGuide.waNumber,
             location: tourGuide.city.name,
             price: tourGuide.price,
-            preferences: tourGuide.preferences.map((preference) => ({
-                id: preference.category.id,
-                name: preference.category.name,
-                group: preference.category.group,
-            })),
+            category: {
+                id: tourGuide.category.id,
+                name: tourGuide.category.name,
+                group: tourGuide.category.group,
+            },
+            verified: tourGuide.verified,
+            bio: tourGuide.bio,
         };
 
         res.status(200).json({

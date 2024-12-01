@@ -9,13 +9,7 @@ export const signUpSchema = z.object({
 export const updateUserSchema = z.object({
     name: z.string().min(1, "Name is required").optional(),
     email: z.string().email("Invalid email format").optional(),
-    birthdate: z.string().refine(
-        (date) => {
-            const parsedDate = Date.parse(date);
-            return !isNaN(parsedDate);
-        },
-        { message: "Invalid date format" }
-    ).optional(),
+    age: z.number().optional(),
 }).refine(
     (data) => Object.keys(data).length > 0,
     { message: "Request body cannot be empty" }
