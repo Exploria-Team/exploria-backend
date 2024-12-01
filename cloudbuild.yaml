@@ -6,6 +6,8 @@ steps:
   # Run Prisma Migrate
   - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'migrate']
+    env:
+      - 'DATABASE_URL=${_DATABASE_URL}'
 
   # Build & deploy to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
