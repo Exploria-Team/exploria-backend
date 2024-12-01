@@ -16,7 +16,7 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'exploria-backend'
+      - 'exploriaaaa'
       - '--platform'
       - 'managed'
       - '--region'
