@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "migrate": "npx prisma migrate dev --name init" ,
+    "migrate": "npx prisma migrate deploy --name init" ,
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx nodemon",
     "create-env": "printenv > .env"
