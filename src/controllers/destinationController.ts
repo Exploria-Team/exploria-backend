@@ -4,6 +4,7 @@ import { getDestinationByIdSchema, searchDestinationsSchema, paginationSchema } 
 import { ZodError } from "zod";
 
 const prisma = new PrismaClient();
+const STORAGE_URL = "https://storage.googleapis.com/exploria-testing-bucket/";
 
 export const getAllDestinations = async (req: Request, res: Response) => {
     try {
@@ -23,16 +24,42 @@ export const getAllDestinations = async (req: Request, res: Response) => {
                     description: true,
                     lat: true,
                     lon: true,
+                    averageRating: true,
+                    entryFee: true,
+                    visitDurationMinutes: true,
+                    city: {
+                        select: {
+                            name: true,
+                        },
+                    },
+                    photos: {
+                        select: {
+                            photoUrl: true,
+                        },
+                    },
                 },
             }),
             prisma.destination.count(),
         ]);
 
+        const formattedDestinations = destinations.map((destination) => ({
+            id: destination.id,
+            name: destination.name,
+            description: destination.description,
+            lat: destination.lat,
+            lon: destination.lon,
+            averageRating: destination.averageRating,
+            entryFee: destination.entryFee,
+            visitDurationMinutes: destination.visitDurationMinutes,
+            city: destination.city.name,
+            photoUrls: destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`),
+        }));
+
         res.status(200).json({
             status_code: 200,
             message: "Destinations fetched successfully",
             data: {
-                destinations,
+                destinations: formattedDestinations,
                 pagination: {
                     currentPage: pageNumber,
                     pageSize: pageSize,
@@ -64,6 +91,26 @@ export const getDestinationById = async (req: Request, res: Response) => {
 
         const destination = await prisma.destination.findUnique({
             where: { id },
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                lat: true,
+                lon: true,
+                averageRating: true,
+                entryFee: true,
+                visitDurationMinutes: true,
+                city: {
+                    select: {
+                        name: true,
+                    },
+                },
+                photos: {
+                    select: {
+                        photoUrl: true,
+                    },
+                },
+            },
         });
 
         if (!destination) {
@@ -73,9 +120,22 @@ export const getDestinationById = async (req: Request, res: Response) => {
             });
         }
 
+        const formattedDestination = {
+            id: destination.id,
+            name: destination.name,
+            description: destination.description,
+            lat: destination.lat,
+            lon: destination.lon,
+            averageRating: destination.averageRating,
+            entryFee: destination.entryFee,
+            visitDurationMinutes: destination.visitDurationMinutes,
+            city: destination.city.name,
+            photoUrls: destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`),
+        };
+
         res.status(200).json({
             status_code: 200,
-            data: destination,
+            data: formattedDestination,
         });
     } catch (error) {
         if (error instanceof ZodError) {
@@ -96,7 +156,7 @@ export const getDestinationById = async (req: Request, res: Response) => {
 
 export const searchDestinations = async (req: Request, res: Response) => {
     try {
-        const { text_search, city } = req.query;
+        const { text_search, city, page, size } = req.query;
 
         const filters: any = {};
 
@@ -113,23 +173,42 @@ export const searchDestinations = async (req: Request, res: Response) => {
             };
         }
 
-        const destinations = await prisma.destination.findMany({
-            where: filters,
-            select: {
-                id: true,
-                name: true,
-                description: true,
-                lat: true,
-                lon: true,
-                city: {
-                    select: {
-                        name: true,
+        const pageNumber = parseInt(page as string, 10) || 1;
+        const pageSize = parseInt(size as string, 10) || 10;
+
+        const offset = (pageNumber - 1) * pageSize;
+
+        const [destinations, totalDestinations] = await Promise.all([
+            prisma.destination.findMany({
+                where: filters,
+                skip: offset,
+                take: pageSize,
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    lat: true,
+                    lon: true,
+                    averageRating: true,
+                    entryFee: true,
+                    visitDurationMinutes: true,
+                    city: {
+                        select: {
+                            name: true,
+                        },
+                    },
+                    photos: {
+                        select: {
+                            photoUrl: true,
+                        },
                     },
                 },
-            },
-        });
+            }),
+            prisma.destination.count({
+                where: filters,
+            }),
+        ]);
 
- 
         if (!destinations.length) {
             return res.status(404).json({
                 status_code: 404,
@@ -137,13 +216,31 @@ export const searchDestinations = async (req: Request, res: Response) => {
             });
         }
 
+        const formattedDestinations = destinations.map((destination) => ({
+            id: destination.id,
+            name: destination.name,
+            description: destination.description,
+            lat: destination.lat,
+            lon: destination.lon,
+            averageRating: destination.averageRating,
+            entryFee: destination.entryFee,
+            visitDurationMinutes: destination.visitDurationMinutes,
+            city: destination.city.name,
+            photoUrls: destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`),
+        }));
+
         res.status(200).json({
             status_code: 200,
             message: "Destinations found",
-            data: destinations.map((destination) => ({
-                ...destination,
-                city: destination.city.name,
-            })),
+            data: {
+                destinations: formattedDestinations,
+                pagination: {
+                    currentPage: pageNumber,
+                    pageSize: pageSize,
+                    totalItems: totalDestinations,
+                    totalPages: Math.ceil(totalDestinations / pageSize),
+                },
+            },
         });
     } catch (error) {
         console.error("Error searching destinations:", error);
