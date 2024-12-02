@@ -10,7 +10,7 @@ const rootRouter: Router = Router();
 
 rootRouter.use("/auth", authRoutes);
 rootRouter.use("/user", userRoutes);
-rootRouter.use("/destination", destinationRoutes);
+rootRouter.use("/destinations", destinationRoutes);
 rootRouter.use("/review", reviewRoutes);
 rootRouter.use("/tour-guides", tourGuideRoutes);
 rootRouter.use("/travel-plan", travelPlanRoutes);
