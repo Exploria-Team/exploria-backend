@@ -1,43 +1,55 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { getTourGuidesSchema, getTourGuideByIdSchema } from "../schema/tourGuides";
-import { group } from "console";
 
 const prisma = new PrismaClient();
 
 export const getTourGuides = async (req: Request, res: Response) => {
     try {
-        const { search } = getTourGuidesSchema.parse(req.query);
+        const { search, page, size } = getTourGuidesSchema.parse(req.query);
+        const pageNumber = parseInt(page, 10);
+        const pageSize = parseInt(size, 10);
 
-        const tourGuides = await prisma.tourGuide.findMany({
-            where: {
-                OR: [
-                    { name: { contains: search, mode: "insensitive" } },
-                    {
-                        city: {
-                            name: { contains: search, mode: "insensitive" },
-                        },
-                    },
-                    {
-                        category: {
-                            name: { contains: search, mode: "insensitive" },
-                        },
-                    },
-                ],
-            },
-            include: {
-                city: {
-                    select: { name: true },
-                },
-                category: {
-                    select: {
-                        id: true,
-                        name: true,
-                        group: true,
+        const offset = (pageNumber - 1) * pageSize;
+
+        const filters: any = {};
+
+        if (search && typeof search === "string") {
+            filters.OR = [
+                { name: { contains: search, mode: "insensitive" } },
+                {
+                    city: {
+                        name: { contains: search, mode: "insensitive" },
                     },
                 },
-            },
-        });
+                {
+                    category: {
+                        name: { contains: search, mode: "insensitive" },
+                    },
+                },
+            ];
+        }
+
+        const [tourGuides, totalTourGuides] = await Promise.all([
+            prisma.tourGuide.findMany({
+                where: filters,
+                skip: offset,
+                take: pageSize,
+                include: {
+                    city: {
+                        select: { name: true },
+                    },
+                    category: {
+                        select: {
+                            id: true,
+                            name: true,
+                            group: true,
+                        },
+                    },
+                },
+            }),
+            prisma.tourGuide.count({ where: filters }),
+        ]);
 
         if (!tourGuides.length) {
             return res.status(404).json({
@@ -49,20 +61,28 @@ export const getTourGuides = async (req: Request, res: Response) => {
         const response = tourGuides.map((guide) => ({
             id: guide.id,
             name: guide.name,
+            email: guide.email,
+            waNumber: guide.waNumber,
             location: guide.city.name,
             price: guide.price,
-            category: {
-                id: guide.category.id,
-                name: guide.category.name,
-                group: guide.category.group,
-            },
+            category: guide.category.name,
+            categoryGroup: guide.category.group,
             verified: guide.verified,
             bio: guide.bio,
+            gender: guide.gender,
         }));
 
         res.status(200).json({
             status_code: 200,
-            data: response,
+            data: {
+                tourGuides: response,
+                pagination: {
+                    currentPage: pageNumber,
+                    pageSize: pageSize,
+                    totalItems: totalTourGuides,
+                    totalPages: Math.ceil(totalTourGuides / pageSize),
+                },
+            },
         });
     } catch (error) {
         if (error.name === "ZodError") {
@@ -110,16 +130,15 @@ export const getTourGuideById = async (req: Request, res: Response) => {
         const response = {
             id: tourGuide.id,
             name: tourGuide.name,
+            email: tourGuide.email,
             waNumber: tourGuide.waNumber,
             location: tourGuide.city.name,
             price: tourGuide.price,
-            category: {
-                id: tourGuide.category.id,
-                name: tourGuide.category.name,
-                group: tourGuide.category.group,
-            },
+            category: tourGuide.category.name,
+            categoryGroup: tourGuide.category.group,
             verified: tourGuide.verified,
             bio: tourGuide.bio,
+            gender: tourGuide.gender,
         };
 
         res.status(200).json({

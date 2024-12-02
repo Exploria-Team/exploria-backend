@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { authMiddleware } from "../middlewares/authMiddleware";
-import { getDestinationById, searchDestinations } from "../controllers/destinationController";
+import { getDestinationById, getDestinations } from "../controllers/destinationController";
 
 const destinationRoutes = Router();
 
-destinationRoutes.get("/", authMiddleware, searchDestinations);
-destinationRoutes.get("/:id", authMiddleware, getDestinationById);
+destinationRoutes.get("/", getDestinations);
+destinationRoutes.get("/:id", getDestinationById);
 
 export default destinationRoutes;

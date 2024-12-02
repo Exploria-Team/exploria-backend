@@ -1,47 +1,88 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import { createReviewSchema } from "../schema/reviews"; 
+import { paginationSchema, createReviewSchema } from "../schema/reviews"; 
 
 const prisma = new PrismaClient();
 
 export const getReviews = async (req: Request, res: Response) => {
     try {
-        const limit = parseInt(req.params.limit, 10);
-        const destinationId = parseInt(req.params.destinationId);
+        const { destinationId } = req.params;
 
-        if (isNaN(limit) || limit <= 0) {
+        const { page, size } = paginationSchema.parse(req.query);
+        const pageNumber = parseInt(page, 10);
+        const pageSize = parseInt(size, 10);
+
+        const offset = (pageNumber - 1) * pageSize;
+
+        const destinationIdInt = parseInt(destinationId, 10);
+        if (isNaN(destinationIdInt) || destinationIdInt <= 0) {
             return res.status(400).json({
                 status_code: 400,
-                message: "Invalid limit parameter"
+                message: "Invalid destinationId parameter",
             });
         }
 
-        if (isNaN(destinationId) || destinationId <= 0) {
-            return res.status(400).json({
-                status_code: 400,
-                message: "Invalid destinationId parameter"
+        const [reviews, totalReviews] = await Promise.all([
+            prisma.review.findMany({
+                where: { destinationId: destinationIdInt },
+                skip: offset,
+                take: pageSize,
+                orderBy: { reviewDate: "desc" },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            profilePictureUrl: true,
+                        },
+                    },
+                    destination: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                },
+            }),
+            prisma.review.count({ where: { destinationId: destinationIdInt } }),
+        ]);
+
+        if (!reviews.length) {
+            return res.status(404).json({
+                status_code: 404,
+                message: "No reviews found",
             });
         }
 
-        const reviews = await prisma.review.findMany({
-            where: { destinationId }, // Keep destinationId as string
-            take: limit,
-            orderBy: { reviewDate: "desc" },
-            include: {
-                user: { select: { id: true, name: true, profilePictureUrl: true } },
-                destination: { select: { id: true, name: true } },
+        const formattedReviews = reviews.map((review) => ({
+            id: review.id,
+            reviewText: review.reviewText,
+            rating: review.rating,
+            reviewDate: review.reviewDate,
+            user: {
+                id: review.user.id,
+                name: review.user.name,
+                profilePictureUrl: review.user.profilePictureUrl,
             },
-        });
+        }));
 
         res.status(200).json({
             status_code: 200,
-            data: reviews
+            data: {
+                reviews: formattedReviews,
+                pagination: {
+                    currentPage: pageNumber,
+                    pageSize: pageSize,
+                    totalItems: totalReviews,
+                    totalPages: Math.ceil(totalReviews / pageSize),
+                },
+            },
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error fetching reviews:", error);
         res.status(500).json({
             status_code: 500,
-            message: "Failed to fetch reviews"
+            message: "Failed to fetch reviews",
         });
     }
 };
