@@ -10,6 +10,7 @@ export const updateUserSchema = z.object({
     name: z.string().min(1, "Name is required").optional(),
     email: z.string().email("Invalid email format").optional(),
     age: z.number().optional(),
+    profilePictureUrl:z.string().optional(),
 }).refine(
     (data) => Object.keys(data).length > 0,
     { message: "Request body cannot be empty" }
