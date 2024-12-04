@@ -30,7 +30,6 @@ class DistanceHybridRecommendationRequest(BaseModel):
 # Initialize the recommendation class
 content_based = ContentBased()
 collaborative_filtering = CollaborativeFiltering()
-# Initiate HybridRecommendation instance
 hybrid_recom = HybridRecommendation()
 
 @app.post("/recommendation/content-based")
