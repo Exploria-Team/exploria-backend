@@ -140,10 +140,20 @@ export const getNormalHybridRecommendation = async (
             user_category_averages: categoryAvg
         });
 
+        const result = [];
+
+        for(const dest_id of response.data.recommendations) {
+            const destination = await prisma.destination.findFirst({
+                where: {id : dest_id}
+            })
+
+            result.push(destination);
+        }
+
         // Send the response from the FastAPI server to the client
         res.status(200).json({
             status_code: 200,
-            data: response.data,
+            data: result,
         });
     } catch (error) {
         console.error(error.message || error);
@@ -205,10 +215,20 @@ export const getDistanceHybridRecommendation = async (
             dest_id: destId
         });
 
+        const result = [];
+
+        for(const dest_id of response.data.recommendations) {
+            const destination = await prisma.destination.findFirst({
+                where: {id : dest_id}
+            })
+
+            result.push(destination);
+        }
+
         // Send the response from the FastAPI server to the client
         res.status(200).json({
             status_code: 200,
-            data: response.data,
+            data: result,
         });
     } catch (error) {
         console.error(error.message || error);
