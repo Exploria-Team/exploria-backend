@@ -13,7 +13,7 @@ export const getContentBasedRecommendation = async (
         const userId = req.user.id;
 
         const reviews = await prisma.review.findMany({
-            where: { userId:1 },
+            where: { userId },
             include: {
                 destination: {
                     select: {
