@@ -91,3 +91,131 @@ export const getCollaborativeRecommendation = async (
         });
     }
 };
+
+export const getNormalHybridRecommendation = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        const userId = req.user.id <= 300 ? req.user.id : 0;
+
+        const reviews = await prisma.review.findMany({
+            where: { userId },
+            include: {
+                destination: {
+                    select: {
+                        categories: {
+                            select: {
+                                categoryId: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        const formattedReviews = reviews.map((review) => ({
+            rating: review.rating,
+            categories: review.destination.categories.map((category) => ({
+                categoryId: category.categoryId,
+            })),
+        }));
+
+        const categorySum = Array(9).fill(0);
+        const categoryCount = Array(9).fill(0);
+
+        formattedReviews.forEach(({ rating, categories }) => {
+            categories.forEach(({ categoryId }) => {
+                categorySum[categoryId-1] += rating;
+                categoryCount[categoryId-1]++;
+            });
+        });
+
+        const categoryAvg = categorySum.map((sum, index) => 
+            categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
+        );
+
+        const response = await axios.post(`${ML_API_URL}/recommendation/normal-hybrid`, {
+            user_id: userId,
+            user_category_averages: categoryAvg
+        });
+
+        // Send the response from the FastAPI server to the client
+        res.status(200).json({
+            status_code: 200,
+            data: response.data,
+        });
+    } catch (error) {
+        console.error(error.message || error);
+        res.status(500).json({
+            status_code: 500,
+            message: "Failed to fetch collaborative recommendations",
+            error: error.response?.data || error.message,
+        });
+    }
+}
+
+export const getDistanceHybridRecommendation = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        const userId = req.user.id <= 300 ? req.user.id : 0;
+        const destId = req.params.destId;
+
+        const reviews = await prisma.review.findMany({
+            where: { userId },
+            include: {
+                destination: {
+                    select: {
+                        categories: {
+                            select: {
+                                categoryId: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        const formattedReviews = reviews.map((review) => ({
+            rating: review.rating,
+            categories: review.destination.categories.map((category) => ({
+                categoryId: category.categoryId,
+            })),
+        }));
+
+        const categorySum = Array(9).fill(0);
+        const categoryCount = Array(9).fill(0);
+
+        formattedReviews.forEach(({ rating, categories }) => {
+            categories.forEach(({ categoryId }) => {
+                categorySum[categoryId-1] += rating;
+                categoryCount[categoryId-1]++;
+            });
+        });
+
+        const categoryAvg = categorySum.map((sum, index) => 
+            categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
+        );
+
+        const response = await axios.post(`${ML_API_URL}/recommendation/distance-hybrid`, {
+            user_id: userId,
+            user_category_averages: categoryAvg,
+            dest_id: destId
+        });
+
+        // Send the response from the FastAPI server to the client
+        res.status(200).json({
+            status_code: 200,
+            data: response.data,
+        });
+    } catch (error) {
+        console.error(error.message || error);
+        res.status(500).json({
+            status_code: 500,
+            message: "Failed to fetch collaborative recommendations",
+            error: error.response?.data || error.message,
+        });
+    }
+}
