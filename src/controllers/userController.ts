@@ -16,6 +16,7 @@ export const updateUser = async (req: Request, res: Response) => {
                 name: validatedData.name,
                 email: validatedData.email,
                 age: validatedData.age, 
+                profilePictureUrl: validatedData.profilePictureUrl, 
             },
         });
 
