@@ -14,5 +14,5 @@ export const prismaClient = new PrismaClient({
 });
 
 app.listen(PORT, () => {
-    console.log("app is Working");
+    console.log("app is Working at port " + PORT);
 });
