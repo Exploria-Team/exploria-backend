@@ -6,6 +6,7 @@ import reviewRoutes from "./reviewRoutes";
 import tourGuideRoutes from "./tourGuideRoutes";
 import travelPlanRoutes from "./travelPlanRoutes";
 import recommendationRoutes from "./recommendationRoutes";
+import categoryRoutes from "./categoryRoutes";
 
 const rootRouter: Router = Router();
 
@@ -16,5 +17,6 @@ rootRouter.use("/review", reviewRoutes);
 rootRouter.use("/tour-guides", tourGuideRoutes);
 rootRouter.use("/travel-plan", travelPlanRoutes);
 rootRouter.use("/recommendation", recommendationRoutes);
+rootRouter.use("/categories", categoryRoutes);
 
 export default rootRouter;

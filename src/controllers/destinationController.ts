@@ -49,6 +49,13 @@ export const getDestinations = async (req: Request, res: Response) => {
                     photos: {
                         select: { photoUrl: true },
                     },
+                    categories: {
+                        select: {
+                            category: {
+                                select: { name: true },
+                            },
+                        },
+                    },
                 },
             }),
             prisma.destination.count({ where: filters }),
@@ -72,6 +79,7 @@ export const getDestinations = async (req: Request, res: Response) => {
             visitDurationMinutes: destination.visitDurationMinutes,
             city: destination.city.name,
             photoUrls: destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`),
+            categories: destination.categories.map((categoryRelation) => categoryRelation.category.name),
         }));
 
         res.status(200).json({
@@ -128,6 +136,13 @@ export const getDestinationById = async (req: Request, res: Response) => {
                         photoUrl: true,
                     },
                 },
+                categories: {
+                    select: {
+                        category: {
+                            select: { name: true },
+                        },
+                    },
+                },
             },
         });
 
@@ -149,6 +164,7 @@ export const getDestinationById = async (req: Request, res: Response) => {
             visitDurationMinutes: destination.visitDurationMinutes,
             city: destination.city.name,
             photoUrls: destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`),
+            categories: destination.categories.map((categoryRelation) => categoryRelation.category.name),
         };
 
         res.status(200).json({

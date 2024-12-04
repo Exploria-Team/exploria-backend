@@ -821,6 +821,15 @@ const swaggerDocs = {
                                 "https://storage.googleapis.com/exploria-testing-bucket/images_output/Pelabuhan%20Marina/Pelabuhan%20Marina_1.jpg",
                             ],
                             },
+                            categories: {
+                                type: "array",
+                                items: {
+                                    type: "string",
+                                },
+                                example: [
+                                    "Bahari",
+                            ],
+                            },
                         },
                         },
                     },
@@ -955,6 +964,15 @@ const swaggerDocs = {
                                     "https://storage.googleapis.com/exploria-testing-bucket/images_output/Kota%20Tua/Kota%20Tua_0.jpg",
                                     "https://storage.googleapis.com/exploria-testing-bucket/images_output/Kota%20Tua/Kota%20Tua_1.jpg",
                                     ],
+                                },
+                                categories: {
+                                    type: "array",
+                                    items: {
+                                        type: "string",
+                                    },
+                                    example: [
+                                        "Budaya",
+                                ],
                                 },
                                 },
                             },
@@ -1467,4 +1485,3 @@ components: {
   };
   
   export default swaggerDocs;
-  
