@@ -74,16 +74,16 @@ def get_normal_hybrid_recommendations(request: NormalHybridRecommendationRequest
 
 @app.post("/recommendation/distance-hybrid")
 def get_normal_hybrid_recommendations(request: DistanceHybridRecommendationRequest):
-    """Get normal hybrid recommendations for a user."""
+    """Get distance hybrid recommendations for a user."""
     try:
-        #### NORMAL HYBRID RECOMMENDATION
+        #### distance HYBRID RECOMMENDATION
         # Prepare user data
         user_id = request.user_id
         chosen_spot_id = request.dest_id
         current_user_data = request.user_category_averages
         choosen_spot_distance_df = hybrid_recom.distance_df.loc[hybrid_recom.distance_df['Place_Id_Source'] == chosen_spot_id]
 
-        # Get (normal) hybrid recommendation for that user
+        # Get (distance) hybrid recommendation for that user
         recommended_id = hybrid_recom.get_recommendation(
             user_id,
             current_user_data,
