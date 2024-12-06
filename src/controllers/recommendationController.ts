@@ -86,7 +86,7 @@ export const getCollaborativeRecommendation = async (
         console.error(error.message || error);
         res.status(500).json({
             status_code: 500,
-            message: "Failed to fetch collaborative recommendations",
+            message: `${ML_API_URL} : valuenya`,
             error: error.response?.data || error.message,
         });
     }
