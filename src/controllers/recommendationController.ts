@@ -144,7 +144,15 @@ export const getNormalHybridRecommendation = async (
 
         for(const dest_id of response.data.recommendations) {
             const destination = await prisma.destination.findFirst({
-                where: {id : dest_id}
+                where: {id : dest_id},
+                select: {
+                    id: true,
+                    name: true,
+                    entryFee: true,
+                    cityId: true,
+                    photos: true,
+                    averageRating: true
+                }
             })
 
             result.push(destination);
@@ -219,7 +227,15 @@ export const getDistanceHybridRecommendation = async (
 
         for(const dest_id of response.data.recommendations) {
             const destination = await prisma.destination.findFirst({
-                where: {id : dest_id}
+                where: {id : dest_id},
+                select: {
+                    id: true,
+                    name: true,
+                    entryFee: true,
+                    cityId: true,
+                    photos: true,
+                    averageRating: true
+                }
             })
 
             result.push(destination);
