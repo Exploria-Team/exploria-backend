@@ -39,22 +39,25 @@ export const getContentBasedRecommendation = async (
 
         formattedReviews.forEach(({ rating, categories }) => {
             categories.forEach(({ categoryId }) => {
-                categorySum[categoryId-1] += rating;
-                categoryCount[categoryId-1]++;
+                categorySum[categoryId - 1] += rating;
+                categoryCount[categoryId - 1]++;
             });
         });
 
-        const categoryAvg = categorySum.map((sum, index) => 
+        const categoryAvg = categorySum.map((sum, index) =>
             categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
         );
 
-        const response = await axios.post(`${ML_API_URL}/recommendation/content-based`, {
-            user_category_averages: categoryAvg,
-        });
+        const response = await axios.post(
+            `${ML_API_URL}/recommendation/content-based`,
+            {
+                user_category_averages: categoryAvg,
+            }
+        );
 
         res.status(200).json({
             status_code: 200,
-            data: response.data
+            data: response.data,
         });
     } catch (error) {
         console.error("Error fetching content-based recommendations:", error);
@@ -73,9 +76,12 @@ export const getCollaborativeRecommendation = async (
         const userId = req.user.id <= 300 ? req.user.id : 0;
 
         // Send a POST request to the FastAPI server
-        const response = await axios.post(`${ML_API_URL}/recommendation/collaborative`, {
-            user_id: 1,
-        });
+        const response = await axios.post(
+            `${ML_API_URL}/recommendation/collaborative`,
+            {
+                user_id: 1,
+            }
+        );
 
         // Send the response from the FastAPI server to the client
         res.status(200).json({
@@ -126,36 +132,56 @@ export const getNormalHybridRecommendation = async (
 
         formattedReviews.forEach(({ rating, categories }) => {
             categories.forEach(({ categoryId }) => {
-                categorySum[categoryId-1] += rating;
-                categoryCount[categoryId-1]++;
+                categorySum[categoryId - 1] += rating;
+                categoryCount[categoryId - 1]++;
             });
         });
 
-        const categoryAvg = categorySum.map((sum, index) => 
+        const categoryAvg = categorySum.map((sum, index) =>
             categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
         );
 
-        const response = await axios.post(`${ML_API_URL}/recommendation/normal-hybrid`, {
-            user_id: userId,
-            user_category_averages: categoryAvg
-        });
+        const response = await axios.post(
+            `${ML_API_URL}/recommendation/normal-hybrid`,
+            {
+                user_id: userId,
+                user_category_averages: categoryAvg,
+            }
+        );
 
         const result = [];
 
-        for(const dest_id of response.data.recommendations) {
+        for (const dest_id of response.data.recommendations) {
             const destination = await prisma.destination.findFirst({
-                where: {id : dest_id},
+                where: { id: dest_id },
                 select: {
                     id: true,
                     name: true,
                     entryFee: true,
                     cityId: true,
-                    photos: true,
-                    averageRating: true
-                }
-            })
+                    photos: {
+                        select: {
+                            photoUrl: true,
+                        },
+                    },
+                    averageRating: true,
+                },
+            });
 
-            result.push(destination);
+            if (destination) {
+                // Transform photos to an array of photoUrls
+                const photoUrls: string[] = destination.photos.map(photo => photo.photoUrl);
+                
+                // Push the transformed destination object to the result array
+                result.push({
+                    id: destination.id,
+                    name: destination.name,
+                    entryFee: destination.entryFee,
+                    cityId: destination.cityId,
+                    photos: photoUrls, // Set photos as an array of strings (photoUrls)
+                    averageRating: destination.averageRating
+                });
+            }
         }
 
         // Send the response from the FastAPI server to the client
@@ -171,7 +197,7 @@ export const getNormalHybridRecommendation = async (
             error: error.response?.data || error.message,
         });
     }
-}
+};
 
 export const getDistanceHybridRecommendation = async (
     req: Request,
@@ -208,37 +234,57 @@ export const getDistanceHybridRecommendation = async (
 
         formattedReviews.forEach(({ rating, categories }) => {
             categories.forEach(({ categoryId }) => {
-                categorySum[categoryId-1] += rating;
-                categoryCount[categoryId-1]++;
+                categorySum[categoryId - 1] += rating;
+                categoryCount[categoryId - 1]++;
             });
         });
 
-        const categoryAvg = categorySum.map((sum, index) => 
+        const categoryAvg = categorySum.map((sum, index) =>
             categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
         );
 
-        const response = await axios.post(`${ML_API_URL}/recommendation/distance-hybrid`, {
-            user_id: userId,
-            user_category_averages: categoryAvg,
-            dest_id: destId
-        });
+        const response = await axios.post(
+            `${ML_API_URL}/recommendation/distance-hybrid`,
+            {
+                user_id: userId,
+                user_category_averages: categoryAvg,
+                dest_id: destId,
+            }
+        );
 
         const result = [];
 
-        for(const dest_id of response.data.recommendations) {
+        for (const dest_id of response.data.recommendations) {
             const destination = await prisma.destination.findFirst({
-                where: {id : dest_id},
+                where: { id: dest_id },
                 select: {
                     id: true,
                     name: true,
                     entryFee: true,
                     cityId: true,
-                    photos: true,
-                    averageRating: true
-                }
-            })
+                    photos: {
+                        select: {
+                            photoUrl: true,
+                        },
+                    },
+                    averageRating: true,
+                },
+            });
 
-            result.push(destination);
+            if (destination) {
+                // Transform photos to an array of photoUrls
+                const photoUrls: string[] = destination.photos.map(photo => photo.photoUrl);
+                
+                // Push the transformed destination object to the result array
+                result.push({
+                    id: destination.id,
+                    name: destination.name,
+                    entryFee: destination.entryFee,
+                    cityId: destination.cityId,
+                    photos: photoUrls, // Set photos as an array of strings (photoUrls)
+                    averageRating: destination.averageRating
+                });
+            }
         }
 
         // Send the response from the FastAPI server to the client
@@ -254,4 +300,4 @@ export const getDistanceHybridRecommendation = async (
             error: error.response?.data || error.message,
         });
     }
-}
+};
