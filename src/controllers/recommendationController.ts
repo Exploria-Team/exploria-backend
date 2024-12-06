@@ -5,105 +5,19 @@ import { ML_API_URL } from "../secrets";
 
 const prisma = new PrismaClient();
 
-export const getContentBasedRecommendation = async (
-    req: Request,
-    res: Response
-) => {
-    try {
-        const userId = req.user.id;
-
-        const reviews = await prisma.review.findMany({
-            where: { userId },
-            include: {
-                destination: {
-                    select: {
-                        categories: {
-                            select: {
-                                categoryId: true,
-                            },
-                        },
-                    },
-                },
-            },
-        });
-
-        const formattedReviews = reviews.map((review) => ({
-            rating: review.rating,
-            categories: review.destination.categories.map((category) => ({
-                categoryId: category.categoryId,
-            })),
-        }));
-
-        const categorySum = Array(9).fill(0);
-        const categoryCount = Array(9).fill(0);
-
-        formattedReviews.forEach(({ rating, categories }) => {
-            categories.forEach(({ categoryId }) => {
-                categorySum[categoryId - 1] += rating;
-                categoryCount[categoryId - 1]++;
-            });
-        });
-
-        const categoryAvg = categorySum.map((sum, index) =>
-            categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
-        );
-
-        const response = await axios.post(
-            `${ML_API_URL}/recommendation/content-based`,
-            {
-                user_category_averages: categoryAvg,
-            }
-        );
-
-        res.status(200).json({
-            status_code: 200,
-            data: response.data,
-        });
-    } catch (error) {
-        console.error("Error fetching content-based recommendations:", error);
-        res.status(500).json({
-            status_code: 500,
-            message: "Failed to fetch content-based recommendations",
-        });
-    }
-};
-
-export const getCollaborativeRecommendation = async (
-    req: Request,
-    res: Response
-) => {
-    try {
-        const userId = req.user.id <= 300 ? req.user.id : 0;
-
-        // Send a POST request to the FastAPI server
-        const response = await axios.post(
-            `${ML_API_URL}/recommendation/collaborative`,
-            {
-                user_id: 1,
-            }
-        );
-
-        // Send the response from the FastAPI server to the client
-        res.status(200).json({
-            status_code: 200,
-            data: response.data,
-        });
-    } catch (error) {
-        console.error(error.message || error);
-        res.status(500).json({
-            status_code: 500,
-            message: `${ML_API_URL} : valuenya`,
-            error: error.response?.data || error.message,
-        });
-    }
-};
-
 export const getNormalHybridRecommendation = async (
     req: Request,
     res: Response
 ) => {
     try {
         const userId = req.user.id <= 300 ? req.user.id : 0;
+
+        // Extract pagination parameters from the query
+        const { page, size } = req.query;
+        const pageNumber = parseInt(page as string, 10) || 1;  // Default to 1 if no page provided
+        const pageSize = parseInt(size as string, 10) || 5;    // Default to 5 items per page if no size provided
+
+        const offset = (pageNumber - 1) * pageSize;
 
         const reviews = await prisma.review.findMany({
             where: { userId },
@@ -149,9 +63,12 @@ export const getNormalHybridRecommendation = async (
             }
         );
 
+        // Paginate the recommendations
+        const recommendations = response.data.recommendations.slice(offset, offset + pageSize);
+
         const result = [];
 
-        for (const dest_id of response.data.recommendations) {
+        for (const dest_id of recommendations) {
             const destination = await prisma.destination.findFirst({
                 where: { id: dest_id },
                 select: {
@@ -184,13 +101,19 @@ export const getNormalHybridRecommendation = async (
             }
         }
 
-        // Send the response from the FastAPI server to the client
+        // Send the paginated response to the client
         res.status(200).json({
             status_code: 200,
             data: result,
+            pagination: {
+                currentPage: pageNumber,
+                pageSize: pageSize,
+                totalItems: response.data.recommendations.length,
+                totalPages: Math.ceil(response.data.recommendations.length / pageSize),
+            }
         });
     } catch (error) {
-        console.error(error.message || error);
+        console.error("Error fetching recommendations:", error);
         res.status(500).json({
             status_code: 500,
             message: "Failed to fetch collaborative recommendations",
@@ -198,6 +121,7 @@ export const getNormalHybridRecommendation = async (
         });
     }
 };
+
 
 export const getDistanceHybridRecommendation = async (
     req: Request,
@@ -254,7 +178,9 @@ export const getDistanceHybridRecommendation = async (
 
         const result = [];
 
-        for (const dest_id of response.data.recommendations) {
+        const recommendations = response.data.recommendations.slice(0, 5);
+
+        for (const dest_id of recommendations) {
             const destination = await prisma.destination.findFirst({
                 where: { id: dest_id },
                 select: {
