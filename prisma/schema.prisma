@@ -88,6 +88,7 @@ model Review {
   reviewText      String     @map("review_text")
   rating          Int        @map("rating")
   reviewDate      DateTime?   @map("review_date")
+  reviewPhotoUrl  String?    @map("review_photo_url")
 
   user            User       @relation(fields: [userId], references: [id])
   destination     Destination @relation(fields: [destinationId], references: [id])

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
+import { uploadFile } from "../utils/googleCloudStorage";
 import { updateUserSchema, setFavoriteSchema, setUserPreferencesSchema } from "../schema/users";
 
 const prisma = new PrismaClient();
@@ -10,13 +11,19 @@ export const updateUser = async (req: Request, res: Response) => {
     try {
         const validatedData = updateUserSchema.parse(req.body);
 
+        let profilePictureUrl = validatedData.profilePictureUrl;
+
+        if (req.file) {
+            profilePictureUrl = await uploadFile(req.file, req.user.id, 'profile-pictures');
+        }
+
         const user = await prisma.user.update({
-            where: { id: parseInt(userId) }, 
+            where: { id: parseInt(userId) },
             data: {
                 name: validatedData.name,
                 email: validatedData.email,
                 age: validatedData.age, 
-                profilePictureUrl: validatedData.profilePictureUrl, 
+                profilePictureUrl,
             },
         });
 

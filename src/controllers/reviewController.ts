@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
+import { uploadFile } from "../utils/googleCloudStorage";
 import { paginationSchema, createReviewSchema } from "../schema/reviews"; 
 
 const prisma = new PrismaClient();
@@ -88,14 +89,17 @@ export const getReviews = async (req: Request, res: Response) => {
 };
 
 export const createReview = async (req: Request, res: Response) => {
+    console.log("Uploaded file:", req.file);
     try {
-        // Validate the input using the schema
         const validatedData = createReviewSchema.parse(req.body);
-
         const { destinationId, reviewText, rating } = validatedData;
         const userId = req.user.id;
 
-        // Create the review
+        let reviewPhotoUrl = null;
+        if (req.file) {
+            reviewPhotoUrl = await uploadFile(req.file, userId, 'review-pictures');
+        }
+
         const review = await prisma.review.create({
             data: {
                 userId,
@@ -103,6 +107,7 @@ export const createReview = async (req: Request, res: Response) => {
                 reviewText,
                 rating,
                 reviewDate: new Date(),
+                reviewPhotoUrl,  // Simpan URL foto jika ada
             },
         });
 

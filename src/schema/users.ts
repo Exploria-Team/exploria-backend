@@ -11,10 +11,7 @@ export const updateUserSchema = z.object({
     email: z.string().email("Invalid email format").optional(),
     age: z.number().optional(),
     profilePictureUrl:z.string().optional(),
-}).refine(
-    (data) => Object.keys(data).length > 0,
-    { message: "Request body cannot be empty" }
-);
+});
 
 export const setFavoriteSchema = z.object({
     destinationId: z.number({ required_error: "Destination ID is required" }),
