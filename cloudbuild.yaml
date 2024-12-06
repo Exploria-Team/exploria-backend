@@ -10,6 +10,7 @@ steps:
       - 'DATABASE_URL=${_DATABASE_URL}'
       - 'JWT_SECRET=${_JWT_SECRET}'
       - 'PORT=${_PORT}'
+      - 'ML_API_URL=${_ML_API_URL}'
 
   # Build & deploy to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
