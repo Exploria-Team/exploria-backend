@@ -1,23 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import numpy as np
-from ML.Recommendation.content_based import ContentBased
-from ML.Recommendation.collaborative_filtering import CollaborativeFiltering
 from ML.Recommendation.hybrid_recommendation import HybridRecommendation
-import keras
-import joblib
-import tensorflow as tf
 
 # Initialize FastAPI app
 app = FastAPI()
 
 # Request models
-class ContentBasedRecommendationRequest(BaseModel):
-    user_category_averages: list
-
-class CollaborativeRecommendationRequest(BaseModel):
-    user_id: int
-
 class NormalHybridRecommendationRequest(BaseModel):
     user_id: int
     user_category_averages: list
@@ -28,27 +16,8 @@ class DistanceHybridRecommendationRequest(BaseModel):
     dest_id: int
 
 # Initialize the recommendation class
-content_based = ContentBased()
-collaborative_filtering = CollaborativeFiltering()
 hybrid_recom = HybridRecommendation()
 
-@app.post("/recommendation/content-based")
-def get_content_based_recommendations(request: ContentBasedRecommendationRequest):
-    """Get content-based recommendations for a user."""
-    try:
-        recommendations = content_based.make_recommendations(request.user_category_averages)
-        return {"recommendations": recommendations}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/recommendation/collaborative")
-def get_collaborative_recommendations(request: CollaborativeRecommendationRequest):
-    """Get collaborative filtering recommendations for a user."""
-    try:
-        recommendations = collaborative_filtering.make_recommendations(request.user_id)
-        return {"recommendations": recommendations}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
     
 @app.post("/recommendation/normal-hybrid")
 def get_normal_hybrid_recommendations(request: NormalHybridRecommendationRequest):
@@ -67,13 +36,13 @@ def get_normal_hybrid_recommendations(request: NormalHybridRecommendationRequest
         result = hybrid_recom.tourism_df.loc[hybrid_recom.tourism_df['Place_Id'].isin(recommended_id)].set_index('Place_Id').reindex(recommended_id).reset_index()
 
         # Displays recommended results from highest to lowest (free to take as much tourism data as you want)
-        return {"recommendations": list(result['Place_Id'])[:5]}
+        return {"recommendations": list(result['Place_Id'])}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/recommendation/distance-hybrid")
-def get_normal_hybrid_recommendations(request: DistanceHybridRecommendationRequest):
+def get_distance_hybrid_recommendations(request: DistanceHybridRecommendationRequest):
     """Get distance hybrid recommendations for a user."""
     try:
         #### distance HYBRID RECOMMENDATION
@@ -93,6 +62,6 @@ def get_normal_hybrid_recommendations(request: DistanceHybridRecommendationReque
         result = hybrid_recom.tourism_df.loc[hybrid_recom.tourism_df['Place_Id'].isin(recommended_id)].set_index('Place_Id').reindex(recommended_id).reset_index()
 
         # Displays recommended results from highest to lowest (free to take as much tourism data as you want)
-        return {"recommendations": list(result['Place_Id'])[:5]}
+        return {"recommendations": list(result['Place_Id'])}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
