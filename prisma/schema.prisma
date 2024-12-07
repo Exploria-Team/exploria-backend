@@ -139,6 +139,7 @@ model TourGuide {
   gender            String  @map("gender")
   verified          Boolean @map("verified")
   bio               String  @map("bio")
+  photoUrl          String? @map("photo_url")
   city              City          @relation(fields: [cityId], references: [id])
   category          Category      @relation(fields: [categoryId], references: [id])
 

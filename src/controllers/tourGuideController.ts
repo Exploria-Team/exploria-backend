@@ -70,6 +70,7 @@ export const getTourGuides = async (req: Request, res: Response) => {
             verified: guide.verified,
             bio: guide.bio,
             gender: guide.gender,
+            photoUrl: guide.photoUrl
         }));
 
         res.status(200).json({
@@ -139,6 +140,7 @@ export const getTourGuideById = async (req: Request, res: Response) => {
             verified: tourGuide.verified,
             bio: tourGuide.bio,
             gender: tourGuide.gender,
+            photoUrl: tourGuide.photoUrl,
         };
 
         res.status(200).json({

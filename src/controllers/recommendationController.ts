@@ -4,6 +4,7 @@ import axios from "axios";
 import { ML_API_URL } from "../secrets";
 
 const prisma = new PrismaClient();
+const STORAGE_URL = "https://storage.googleapis.com/exploria-testing-bucket/";
 
 export const getNormalHybridRecommendation = async (
     req: Request,
@@ -87,7 +88,7 @@ export const getNormalHybridRecommendation = async (
 
             if (destination) {
                 // Transform photos to an array of photoUrls
-                const photoUrls: string[] = destination.photos.map(photo => photo.photoUrl);
+                const photoUrls: string[] = destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`);
                 
                 // Push the transformed destination object to the result array
                 result.push({
@@ -199,7 +200,7 @@ export const getDistanceHybridRecommendation = async (
 
             if (destination) {
                 // Transform photos to an array of photoUrls
-                const photoUrls: string[] = destination.photos.map(photo => photo.photoUrl);
+                const photoUrls: string[] = destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`);
                 
                 // Push the transformed destination object to the result array
                 result.push({
