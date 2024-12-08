@@ -66,7 +66,8 @@ export const getNormalHybridRecommendation = async (
         ); 
 
         res.json({
-            categoryAvg
+            categoryAvg,
+            preferences
         });
 
         const response = await axios.post(
