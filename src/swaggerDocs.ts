@@ -543,39 +543,88 @@ const swaggerDocs = {
             security: [{ jwtAuth: [] }],
             description: 'Retrieve the list of favorite destinations for the authenticated user.',
             responses: {
-            200: {
-                description: 'List of favorites retrieved successfully',
-                content: {
-                'application/json': {
-                    schema: {
-                    type: 'object',
-                    properties: {
-                        status_code: { type: 'integer', example: 200 },
-                        data: {
-                        type: 'array',
-                        items: {
-                            type: 'object',
-                            properties: {
-                            id: { type: 'integer', example: 1 },
-                            destination: {
+                200: {
+                    description: 'List of favorites retrieved successfully',
+                    content: {
+                        'application/json': {
+                            schema: {
                                 type: 'object',
                                 properties: {
-                                id: { type: 'string', format: 'uuid', example: 'e7a2b6bb-9e74-4c77-8d87-d57f6f5035b5' },
-                                name: { type: 'string', example: 'Kota Tua' },
-                                description: { type: 'string', example: 'A historical landmark in Jakarta.' },
-                                averageRating: { type: 'number', format: 'float', example: 4.5 },
-                                city: { type: 'string', example: 'Jakarta' },
+                                    status_code: { type: 'integer', example: 200 },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                id: { type: 'integer', example: 2 },
+                                                destination: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        id: {
+                                                            type: 'string',
+                                                            format: 'uuid',
+                                                            example: 'e7a2b6bb-9e74-4c77-8d87-d57f6f5035b5',
+                                                        },
+                                                        name: {
+                                                            type: 'string',
+                                                            example: 'Kota Tua',
+                                                        },
+                                                        description: {
+                                                            type: 'string',
+                                                            example:
+                                                                'Kota tua di Jakarta, yang juga bernama Kota Tua, berpusat di Alun-Alun Fatahillah...',
+                                                        },
+                                                        lat: {
+                                                            type: 'number',
+                                                            format: 'float',
+                                                            example: -6.1376448,
+                                                        },
+                                                        lon: {
+                                                            type: 'number',
+                                                            format: 'float',
+                                                            example: 106.8171245,
+                                                        },
+                                                        averageRating: {
+                                                            type: 'number',
+                                                            format: 'float',
+                                                            example: 4.6,
+                                                        },
+                                                        entryFee: {
+                                                            type: 'integer',
+                                                            nullable: true,
+                                                            example: null,
+                                                        },
+                                                        city: {
+                                                            type: 'string',
+                                                            example: 'Jakarta',
+                                                        },
+                                                        photoUrl: {
+                                                            type: 'string',
+                                                            example:
+                                                                'https://storage.googleapis.com/bucket-name/images_output/Kota%20Tua/Kota%20Tua_0.jpg',
+                                                        },
+                                                        categories: {
+                                                            type: 'array',
+                                                            items: {
+                                                                type: 'string',
+                                                            },
+                                                            example: ['Budaya'],
+                                                        },
+                                                    },
+                                                },
+                                                date: {
+                                                    type: 'string',
+                                                    format: 'date-time',
+                                                    example: '2024-12-03T12:00:00Z',
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                             },
-                            date: { type: 'string', format: 'date-time', example: '2024-12-03T12:00:00Z' },
-                            },
-                        },
                         },
                     },
-                    },
                 },
-                },
-            },
             404: {
                 description: 'No favorites found',
                 content: {
@@ -817,8 +866,8 @@ const swaggerDocs = {
                                 type: "string",
                             },
                             example: [
-                                "https://storage.googleapis.com/exploria-testing-bucket/images_output/Pelabuhan%20Marina/Pelabuhan%20Marina_0.jpg",
-                                "https://storage.googleapis.com/exploria-testing-bucket/images_output/Pelabuhan%20Marina/Pelabuhan%20Marina_1.jpg",
+                                "https://storage.googleapis.com/bucket-name/images_output/Pelabuhan%20Marina/Pelabuhan%20Marina_0.jpg",
+                                "https://storage.googleapis.com/bucket-name/images_output/Pelabuhan%20Marina/Pelabuhan%20Marina_1.jpg",
                             ],
                             },
                             categories: {
@@ -961,8 +1010,8 @@ const swaggerDocs = {
                                     type: "array",
                                     items: { type: "string" },
                                     example: [
-                                    "https://storage.googleapis.com/exploria-testing-bucket/images_output/Kota%20Tua/Kota%20Tua_0.jpg",
-                                    "https://storage.googleapis.com/exploria-testing-bucket/images_output/Kota%20Tua/Kota%20Tua_1.jpg",
+                                    "https://storage.googleapis.com/bucket-name/images_output/Kota%20Tua/Kota%20Tua_0.jpg",
+                                    "https://storage.googleapis.com/bucket-name/images_output/Kota%20Tua/Kota%20Tua_1.jpg",
                                     ],
                                 },
                                 categories: {
@@ -1101,17 +1150,18 @@ const swaggerDocs = {
                           items: {
                             type: 'object',
                             properties: {
-                              id: { type: 'string' },
-                              name: { type: 'string' },
-                              email: { type: 'string' },
-                              waNumber: { type: 'string' },
-                              location: { type: 'string' },
-                              price: { type: 'integer' },
-                              category: { type: 'string' },
-                              categoryGroup: { type: 'string' },
-                              verified: { type: 'boolean' },
-                              bio: { type: 'string' },
-                              gender: { type: 'string' },
+                                id: { type: 'string', example: "8f41316c-07e3-43a0-85ac-974fd89d3f0c" },
+                                name: { type: 'string', example: "Wilhelmine Hutama" },
+                                email: { type: 'string', example: "wilhelmine2k@gmail.com" },
+                                waNumber: { type: 'string', example: "6281234567890" },
+                                location: { type: 'string', example: "Jakarta" },
+                                price: { type: 'integer', example: 413776 },
+                                category: { type: 'string', example: "Taman Hiburan" },
+                                categoryGroup: { type: 'string', example: "Wisata Edukasi dan Hiburan" },
+                                verified: { type: 'boolean', example: true },
+                                bio: { type: 'string', example: "Halo! Nama saya Wilhelmine Hazell, dan saya ahli dalam membawa Anda menikmati keseruan tempat-tempat hiburan terbaik di Jakarta. Bersama saya, Anda akan menemukan taman hiburan seru, wahana menarik, dan momen penuh tawa yang cocok untuk keluarga maupun teman-teman." },
+                                gender: { type: 'string', example: "Male" },
+                                photoUrl: { type: 'string', example: "https://storage.googleapis.com/bucket-name/tour_guide/Male/Male%20(49).jpg" },
                             },
                           },
                         },
@@ -1205,17 +1255,18 @@ const swaggerDocs = {
                     data: {
                       type: 'object',
                       properties: {
-                        id: { type: 'string' },
-                        name: { type: 'string' },
-                        email: { type: 'string' },
-                        waNumber: { type: 'string' },
-                        location: { type: 'string' },
-                        price: { type: 'integer' },
-                        category: { type: 'string' },
-                        categoryGroup: { type: 'string' },
-                        verified: { type: 'boolean' },
-                        bio: { type: 'string' },
-                        gender: { type: 'string' },
+                        id: { type: 'string', example: "8f41316c-07e3-43a0-85ac-974fd89d3f0c" },
+                        name: { type: 'string', example: "Wilhelmine Hutama" },
+                        email: { type: 'string', example: "wilhelmine2k@gmail.com" },
+                        waNumber: { type: 'string', example: "6281234567890" },
+                        location: { type: 'string', example: "Jakarta" },
+                        price: { type: 'integer', example: 413776 },
+                        category: { type: 'string', example: "Taman Hiburan" },
+                        categoryGroup: { type: 'string', example: "Wisata Edukasi dan Hiburan" },
+                        verified: { type: 'boolean', example: true },
+                        bio: { type: 'string', example: "Halo! Nama saya Wilhelmine Hazell, dan saya ahli dalam membawa Anda menikmati keseruan tempat-tempat hiburan terbaik di Jakarta. Bersama saya, Anda akan menemukan taman hiburan seru, wahana menarik, dan momen penuh tawa yang cocok untuk keluarga maupun teman-teman." },
+                        gender: { type: 'string', example: "Male" },
+                        photoUrl: { type: 'string', example: "https://storage.googleapis.com/bucket-name/tour_guide/Male/Male%20(49).jpg" },
                       },
                     },
                   },
@@ -1395,6 +1446,33 @@ const swaggerDocs = {
             requestBody: {
                 required: true,
                 content: {
+                    'multipart/form-data': {
+                        schema: {
+                            type: 'object',
+                            properties: {
+                                destinationId: { type: 'integer', example: 5 },
+                                reviewText: { type: 'string', example: 'Great place, enjoyed my visit!' },
+                                rating: { type: 'integer', minimum: 1, maximum: 5, example: 4 },
+                                reviewPhoto: {
+                                    type: 'string',
+                                    format: 'binary',
+                                    description: 'Upload an optional review photo',
+                                },
+                            },
+                            required: ['destinationId', 'reviewText', 'rating'],
+                        },
+                        examples: {
+                            WithPhoto: {
+                                summary: 'Review with photo',
+                                value: {
+                                    destinationId: 5,
+                                    reviewText: 'Amazing experience at this place!',
+                                    rating: 5,
+                                    reviewPhoto: '(binary data)',
+                                },
+                            },
+                        },
+                    },
                     'application/json': {
                         schema: {
                             type: 'object',
@@ -1404,6 +1482,16 @@ const swaggerDocs = {
                                 rating: { type: 'integer', minimum: 1, maximum: 5, example: 4 },
                             },
                             required: ['destinationId', 'reviewText', 'rating'],
+                        },
+                        examples: {
+                            WithoutPhoto: {
+                                summary: 'Review without photo',
+                                value: {
+                                    destinationId: 5,
+                                    reviewText: 'Had a fun trip, will come back!',
+                                    rating: 4,
+                                },
+                            },
                         },
                     },
                 },
@@ -1426,6 +1514,13 @@ const swaggerDocs = {
                                             reviewText: { type: 'string', example: 'Great place, enjoyed my visit!' },
                                             rating: { type: 'integer', example: 4 },
                                             reviewDate: { type: 'string', format: 'date-time', example: '2024-12-03T07:43:15.486Z' },
+                                            reviewPhotoUrl: {
+                                                type: 'string',
+                                                nullable: true,
+                                                example:
+                                                    'https://storage.googleapis.com/bucket-name/review-pictures/user-301-review-12345.jpg',
+                                                description: 'URL of the uploaded review photo, if available',
+                                            },
                                         },
                                     },
                                 },
@@ -1464,6 +1559,316 @@ const swaggerDocs = {
             },
         },
     },
+    "/travel-plan": {
+        post: {
+            summary: "Create a new travel plan",
+            tags: ["Travel Plan"],
+            security: [{ jwtAuth: [] }],
+            requestBody: {
+                required: true,
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                name: { type: "string", example: "rahmi travel plann" },
+                                startDate: { type: "string", format: "date", example: "2024-12-8" },
+                                endDate: { type: "string", format: "date", example: "2024-12-11" }
+                            },
+                            required: ["name", "startDate", "endDate"]
+                        }
+                    }
+                }
+            },
+            responses: {
+                201: {
+                    description: "Travel plan created successfully",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 201 },
+                                    data: {
+                                        type: "object",
+                                        properties: {
+                                            id: { type: "string", example: "0c124619-df40-412b-a823-89fc38691bcf" },
+                                            name: { type: "string", example: "rahmi travel plann" },
+                                            createdAt: { type: "string", format: "date-time", example: "2024-12-08T07:01:06.028Z" },
+                                            startDate: { type: "string", format: "date-time", example: "2024-12-08T00:00:00.000Z" },
+                                            endDate: { type: "string", format: "date-time", example: "2024-12-11T00:00:00.000Z" },
+                                            totalDays: { type: "integer", example: 3 },
+                                            userId: { type: "integer", example: 322 }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Validation error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 400 },
+                                    message: {
+                                        type: "array",
+                                        items: {
+                                            type: "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "Internal server error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 500 },
+                                    message: { type: "string", example: "Failed to add plan" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ,
+        get: {
+            summary: "Get user's travel plans",
+            tags: ["Travel Plan"],
+            security: [{ jwtAuth: [] }],
+            responses: {
+                200: {
+                    description: "Travel plans retrieved successfully",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 200 },
+                                    data: {
+                                        type: "array",
+                                        items: {
+                                            type: "object",
+                                            properties: {
+                                                id: { type: "string", example: "0c124619-df40-412b-a823-89fc38691bcf" },
+                                                name: { type: "string", example: "rahmi travel plann" },
+                                                createdAt: { type: "string", format: "date-time", example: "2024-12-08T07:01:06.028Z" },
+                                                startDate: { type: "string", format: "date-time", example: "2024-12-08T00:00:00.000Z" },
+                                                endDate: { type: "string", format: "date-time", example: "2024-12-11T00:00:00.000Z" },
+                                                totalDays: { type: "integer", example: 3 },
+                                                userId: { type: "integer", example: 322 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 401 },
+                                    message: { type: "string", example: "Unauthorized" }
+                                }
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "Internal server error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 500 },
+                                    message: { type: "string", example: "Failed to fetch travel plans" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    ,
+    "/travel-plan/destination": {
+        post: {
+            summary: "Add destination to travel plan",
+            tags: ["Travel Plan"],
+            security: [{ jwtAuth: [] }],
+            requestBody: {
+                required: true,
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                planId: { type: "string", format: "uuid", example: "305840f9-676e-47d6-a96a-6a45c44cc875" },
+                                destinationId: { type: "integer", example: 100 },
+                                date: { type: "string", format: "date-time", example: "2024-11-25T00:00:00Z" }
+                            },
+                            required: ["planId", "destinationId", "date"]
+                        }
+                    }
+                }
+            },
+            responses: {
+                201: {
+                    description: "Destination added to plan successfully",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 201 },
+                                    data: {
+                                        type: "object",
+                                        properties: {
+                                            id: { type: "string", format: "uuid", example: "bbc67490-3977-429f-9f8d-6370042406f8" },
+                                            planId: { type: "string", format: "uuid", example: "305840f9-676e-47d6-a96a-6a45c44cc875" },
+                                            destinationId: { type: "integer", example: 100 },
+                                            date: { type: "string", format: "date-time", example: "2024-11-25T00:00:00.000Z" }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: "Validation error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 400 },
+                                    message: { type: "array", items: { type: "string" } }
+                                }
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "Internal server error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 500 },
+                                    message: { type: "string", example: "Failed to add destination to plan" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ,
+        get: {
+            summary: "Get destinations for a travel plan",
+            tags: ["Travel Plan"],
+            security: [{ jwtAuth: [] }],
+            parameters: [
+                {
+                    name: "planId",
+                    in: "path",
+                    required: true,
+                    description: "ID of the travel plan",
+                    schema: {
+                        type: "string",
+                        format: "uuid"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "List of destinations in the travel plan",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 200 },
+                                    data: {
+                                        type: "array",
+                                        items: {
+                                            type: "object",
+                                            properties: {
+                                                id: { type: "string", format: "uuid" },
+                                                planId: { type: "string", format: "uuid" },
+                                                destinationId: { type: "integer" },
+                                                date: { type: "string", format: "date-time" },
+                                                destination: {
+                                                    type: "object",
+                                                    properties: {
+                                                        id: { type: "integer" },
+                                                        name: { type: "string" },
+                                                        description: { type: "string" },
+                                                        averageRating: { type: "number" },
+                                                        lat: { type: "number" },
+                                                        lon: { type: "number" },
+                                                        entryFee: { type: "integer", nullable: true },
+                                                        visitDurationMinutes: { type: "integer", nullable: true },
+                                                        cityId: { type: "integer" }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Travel plan not found",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 404 },
+                                    message: { type: "string", example: "Travel plan not found" }
+                                }
+                            }
+                        }
+                    }
+                },
+                500: {
+                    description: "Internal server error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 500 },
+                                    message: { type: "string", example: "Failed to fetch destinations" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 },
 components: {
     securitySchemes: {
