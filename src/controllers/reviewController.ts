@@ -17,13 +17,14 @@ export const updateRating = async (req: Request, res: Response) => {
             sum += review.rating;
             cnt++;
         }
-        result.push([i, cnt == 0 ? 0 : parseFloat(parseFloat(sum/cnt).toFixed(1))]);
+        const ans = (sum / cnt).toFixed(1);
+        result.push([i, cnt == 0 ? 0 : parseFloat(ans)]);
         const updatedDestination = await prisma.destination.update({
             where: {
                 id: i, // Specific ID to update
             },
             data: {
-                averageRating: cnt == 0 ? 0 : parseFloat(parseFloat(sum/cnt).toFixed(1)), // New value for the column
+                averageRating: cnt == 0 ? 0 : parseFloat(ans), // New value for the column
             },
         });
 
@@ -137,6 +138,26 @@ export const createReview = async (req: Request, res: Response) => {
                 rating,
                 reviewDate: new Date(),
                 reviewPhotoUrl,  // Simpan URL foto jika ada
+            },
+        });
+
+        // update Rating
+        const reviews = await prisma.review.findMany({
+            where: {destinationId}
+        });
+
+        let sum = 0, cnt = 0;
+        for(const review of reviews) {
+            sum += review.rating;
+            cnt++;
+        }
+
+        const updatedDestination = await prisma.destination.update({
+            where: {
+                id: destinationId, // Specific ID to update
+            },
+            data: {
+                averageRating: cnt == 0 ? 0 : parseFloat((sum / cnt).toFixed(1)), // New value for the column
             },
         });
 
