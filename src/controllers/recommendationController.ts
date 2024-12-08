@@ -10,7 +10,7 @@ export const getNormalHybridRecommendation = async (
     res: Response
 ) => {
     try {
-        const userId = 1;
+        const userId = req.user.id <= 300 ? req.user.id : 0;
 
         // Extract pagination parameters from the query
         const { page, size } = req.query;
@@ -64,11 +64,6 @@ export const getNormalHybridRecommendation = async (
         const categoryAvg = categorySum.map((sum, index) =>
             categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
         ); 
-
-        res.json({
-            categoryAvg,
-            preferences
-        });
 
         const response = await axios.post(
             `${ML_API_URL}/recommendation/normal-hybrid`,
