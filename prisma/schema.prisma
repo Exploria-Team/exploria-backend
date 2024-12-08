@@ -168,7 +168,7 @@ model PlanDestination {
   destinationId  Int        @map("destination_id")
   date           DateTime   @map("date")
 
-  plan           Plan       @relation(fields: [planId], references: [id])
+  plan           Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
   destination    Destination @relation(fields: [destinationId], references: [id])
 
   @@map("plan_destinations")

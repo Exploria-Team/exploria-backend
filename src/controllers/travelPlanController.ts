@@ -98,16 +98,30 @@ export const deleteTravelPlan = async (req: Request, res: Response) => {
 export const getPlanDestinations = async (req: Request, res: Response) => {
     try {
         const planId = req.params.planId;
-    
+
+        const planExists = await prisma.plan.findUnique({
+            where: { id: planId },
+        });
+
+        if (!planExists) {
+            return res.status(404).json({
+                status_code: 404,
+                message: "Plan not found",
+            });
+        }
+
         const planDestinations = await prisma.planDestination.findMany({
             where: { planId },
             include: {
-                destination: true
-            }
+                destination: true,
+            },
         });
-    
-        res.send(planDestinations);
-    } catch(error) {
+
+        res.status(200).json({
+            status_code: 200,
+            data: planDestinations,
+        });
+    } catch (error) {
         console.error("Error fetching Plan Destinations", error);
         res.status(500).json({
             status_code: 500,

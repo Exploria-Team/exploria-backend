@@ -4,7 +4,6 @@ import { getDestinationByIdSchema, paginationSchema } from "../schema/destinatio
 import { ZodError } from "zod";
 
 const prisma = new PrismaClient();
-const STORAGE_URL = "https://storage.googleapis.com/exploria-testing-bucket/";
 
 export const getDestinations = async (req: Request, res: Response) => {
     try {
@@ -78,7 +77,7 @@ export const getDestinations = async (req: Request, res: Response) => {
             entryFee: destination.entryFee,
             visitDurationMinutes: destination.visitDurationMinutes,
             city: destination.city.name,
-            photoUrls: destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`),
+            photoUrls: destination.photos.map((photo) => photo.photoUrl),
             categories: destination.categories.map((categoryRelation) => categoryRelation.category.name),
         }));
 
@@ -163,7 +162,7 @@ export const getDestinationById = async (req: Request, res: Response) => {
             entryFee: destination.entryFee,
             visitDurationMinutes: destination.visitDurationMinutes,
             city: destination.city.name,
-            photoUrls: destination.photos.map((photo) => `${STORAGE_URL}${photo.photoUrl}`),
+            photoUrls: destination.photos.map((photo) => photo.photoUrl),
             categories: destination.categories.map((categoryRelation) => categoryRelation.category.name),
         };
 
