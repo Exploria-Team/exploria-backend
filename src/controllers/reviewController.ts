@@ -17,13 +17,13 @@ export const updateRating = async (req: Request, res: Response) => {
             sum += review.rating;
             cnt++;
         }
-        result.push([i, cnt == 0 ? 0 : sum/cnt]);
+        result.push([i, cnt == 0 ? 0 : parseFloat(parseFloat(sum/cnt).toFixed(1))]);
         const updatedDestination = await prisma.destination.update({
             where: {
                 id: i, // Specific ID to update
             },
             data: {
-                averageRating: cnt == 0 ? 0 : sum/cnt, // New value for the column
+                averageRating: cnt == 0 ? 0 : parseFloat(parseFloat(sum/cnt).toFixed(1)), // New value for the column
             },
         });
 
