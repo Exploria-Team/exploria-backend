@@ -65,6 +65,10 @@ export const getNormalHybridRecommendation = async (
             categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
         ); 
 
+        res.json({
+            categoryAvg
+        });
+
         const response = await axios.post(
             `${ML_API_URL}/recommendation/normal-hybrid`,
             {
@@ -172,8 +176,8 @@ export const getDistanceHybridRecommendation = async (
         });
 
         for(const preference of preferences) {
-            categorySum[preference.categoryId] = 5;
-            categoryCount[preference.categoryId] = 1;
+            categorySum[preference.categoryId - 1] = 5;
+            categoryCount[preference.categoryId - 1] = 1;
         }
 
         formattedReviews.forEach(({ rating, categories }) => {
