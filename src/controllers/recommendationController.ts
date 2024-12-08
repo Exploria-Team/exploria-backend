@@ -45,6 +45,16 @@ export const getNormalHybridRecommendation = async (
         const categorySum = Array(9).fill(0);
         const categoryCount = Array(9).fill(0);
 
+        const preferences = await prisma.preference.findMany({
+            where: {userId},
+            select: {categoryId: true}
+        });
+
+        for(const preference of preferences) {
+            categorySum[preference.categoryId] = 5;
+            categoryCount[preference.categoryId] = 1;
+        }
+
         formattedReviews.forEach(({ rating, categories }) => {
             categories.forEach(({ categoryId }) => {
                 categorySum[categoryId - 1] += rating;
@@ -156,6 +166,16 @@ export const getDistanceHybridRecommendation = async (
 
         const categorySum = Array(9).fill(0);
         const categoryCount = Array(9).fill(0);
+
+        const preferences = await prisma.preference.findMany({
+            where: {userId},
+            select: {categoryId: true}
+        });
+
+        for(const preference of preferences) {
+            categorySum[preference.categoryId] = 5;
+            categoryCount[preference.categoryId] = 1;
+        }
 
         formattedReviews.forEach(({ rating, categories }) => {
             categories.forEach(({ categoryId }) => {
