@@ -5,6 +5,26 @@ import { paginationSchema, createReviewSchema } from "../schema/reviews";
 
 const prisma = new PrismaClient();
 
+export const updateRating = async (req: Request, res: Response) => {
+    const result = [];
+    for(let i = 1; i <= 437; i++) {
+        const reviews = await prisma.review.findMany({
+            where: {destinationId: i}
+        });
+
+        let sum = 0, cnt = 0;
+        for(const review of reviews) {
+            sum += review.rating;
+            cnt++;
+        }
+        result.push([i, cnt == 0 ? 0 : sum/cnt]);
+    }
+
+    res.json({
+        result
+    });
+}
+
 export const getReviews = async (req: Request, res: Response) => {
     try {
         const { destinationId } = req.params;
