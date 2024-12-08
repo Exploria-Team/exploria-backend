@@ -18,10 +18,19 @@ export const updateRating = async (req: Request, res: Response) => {
             cnt++;
         }
         result.push([i, cnt == 0 ? 0 : sum/cnt]);
+        const updatedDestination = await prisma.destination.update({
+            where: {
+                id: i, // Specific ID to update
+            },
+            data: {
+                averageRating: cnt == 0 ? 0 : sum/cnt, // New value for the column
+            },
+        });
+
     }
 
     res.json({
-        result
+        data: "ok bro"
     });
 }
 
