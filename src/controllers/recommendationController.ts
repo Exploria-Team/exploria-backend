@@ -10,7 +10,7 @@ export const getNormalHybridRecommendation = async (
     res: Response
 ) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.id <= 300 ? req.user.id : 0;
 
         // Extract pagination parameters from the query
         const { page, size } = req.query;
@@ -45,7 +45,7 @@ export const getNormalHybridRecommendation = async (
         const categoryCount = Array(9).fill(0);
 
         const preferences = await prisma.preference.findMany({
-            where: {userId: userId},
+            where: {userId: req.user.id},
             select: {categoryId: true}
         });
 
@@ -141,7 +141,7 @@ export const getDistanceHybridRecommendation = async (
     res: Response
 ) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.id <= 300 ? req.user.id : 0;
         const destId = req.params.destId;
 
         const reviews = await prisma.review.findMany({
@@ -170,7 +170,7 @@ export const getDistanceHybridRecommendation = async (
         const categoryCount = Array(9).fill(0);
 
         const preferences = await prisma.preference.findMany({
-            where: {userId},
+            where: {userId: req.user.id},
             select: {categoryId: true}
         });
 
