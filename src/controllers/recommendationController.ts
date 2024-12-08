@@ -114,6 +114,8 @@ export const getNormalHybridRecommendation = async (
         // Send the paginated response to the client
         res.status(200).json({
             status_code: 200,
+            categoryAvg,
+            categoryCount,
             data: result,
             pagination: {
                 currentPage: pageNumber,
@@ -234,6 +236,8 @@ export const getDistanceHybridRecommendation = async (
 
         // Send the response from the FastAPI server to the client
         res.status(200).json({
+            categoryAvg,
+            categoryCount,
             status_code: 200,
             data: result,
         });
