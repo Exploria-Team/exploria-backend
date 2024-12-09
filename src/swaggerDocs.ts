@@ -127,7 +127,7 @@ const swaggerDocs = {
                 },
             },
             400: {
-                description: "Bad Request - Invalid credentials or account not found",
+                description: "Bad Request",
                 content: {
                 "application/json": {
                     schema: {
@@ -156,53 +156,6 @@ const swaggerDocs = {
             },
         },
      },
-     "/auth/me": {
-        get: {
-            summary: "Get current user details",
-            tags: ["Auth"],
-            security: [{ jwtAuth: [] }],
-            responses: {
-            200: {
-                description: "Current user details",
-                content: {
-                "application/json": {
-                    schema: {
-                    type: "object",
-                    properties: {
-                        id: { type: "integer" },
-                        name: { type: "string" },
-                        email: { type: "string" },
-                        password: { type: "string" }, // Password included
-                        createdAt: { type: "string", format: "date-time" },
-                        updatedAt: { type: "string", format: "date-time" },
-                        profilePictureUrl: { type: "string", nullable: true },
-                        age: { type: "integer", nullable: true },
-                    },
-                    },
-
-                },
-                },
-            },
-            401: {
-                description: "Unauthorized",
-                content: {
-                "application/json": {
-                    schema: {
-                    type: "object",
-                    properties: {
-                        message: { type: "string" },
-                    },
-                    },
-                    example: {
-                    message: "Invalid Authorization",
-                    },
-                },
-                },
-            },
-            },
-        },
-    },
-    
     '/user/{id}': {
         get: {
             summary: "Get user by ID",
@@ -233,21 +186,33 @@ const swaggerDocs = {
                                     data: {
                                         type: "object",
                                         properties: {
-                                            id: { type: "integer", example: 1 },
-                                            name: { type: "string", example: "John Doe" },
-                                            email: { type: "string", example: "john.doe@example.com" },
+                                            id: { type: "integer" },
+                                            name: { type: "string" },
+                                            email: { type: "string" },
                                             profilePictureUrl: {
                                                 type: "string",
                                                 nullable: true,
-                                                example: "https://example.com/path/to/profile-picture.jpg",
                                             },
-                                            age: { type: "integer", nullable: true, example: 30 },
+                                            age: { type: "integer", nullable: true },
                                         },
                                     },
                                 },
                             },
                         },
                     },
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    message: { type: "string", example: "Invalid Authorization" }
+                                }
+                            }
+                        }
+                    }
                 },
                 404: {
                     description: "User not found",
@@ -306,8 +271,8 @@ const swaggerDocs = {
                         schema: {
                             type: "object",
                             properties: {
-                                name: { type: "string", example: "John Doe" },
-                                email: { type: "string", example: "john.doe@example.com" },
+                                name: { type: "string", example: "samsul" },
+                                email: { type: "string", example: "samsul@gmail.com" },
                                 age: { type: "integer", example: 30 },
                                 profilePictureUrl: {
                                     type: "string",
@@ -320,20 +285,20 @@ const swaggerDocs = {
                             minimal: {
                                 summary: "Update name only",
                                 value: {
-                                    name: "John Doe",
+                                    name: "samsul",
                                 },
                             },
                             emailOnly: {
                                 summary: "Update email only",
                                 value: {
-                                    email: "john.doe@example.com",
+                                    email: "samsul@gmail.com",
                                 },
                             },
                             fullUpdate: {
                                 summary: "Full update with all fields",
                                 value: {
-                                    name: "John Doe",
-                                    email: "john.doe@example.com",
+                                    name: "samsul",
+                                    email: "samsul@gmail.com",
                                     age: 30,
                                     profilePictureUrl: "https://example.com/path/to/profile-picture.jpg",
                                 },
@@ -360,14 +325,11 @@ const swaggerDocs = {
                                     data: {
                                         type: "object",
                                         properties: {
-                                            id: { type: "integer", example: 1 },
-                                            name: { type: "string", example: "John Doe" },
-                                            email: { type: "string", example: "john.doe@example.com" },
-                                            profilePictureUrl: {
-                                                type: "string",
-                                                example: "https://example.com/path/to/profile-picture.jpg",
-                                            },
-                                            age: { type: "integer", example: 30 },
+                                            id: { type: "integer" },
+                                            name: { type: "string" },
+                                            email: { type: "string" },
+                                            profilePictureUrl: { type: "string" },
+                                            age: { type: "integer" },
                                         },
                                     },
                                 },
@@ -391,9 +353,8 @@ const swaggerDocs = {
                                             properties: {
                                                 message: {
                                                     type: "string",
-                                                    example: "Request body cannot be empty",
                                                 },
-                                                path: { type: "string", example: "name" },
+                                                path: { type: "string" },
                                             },
                                         },
                                     },
@@ -402,19 +363,18 @@ const swaggerDocs = {
                         },
                     },
                 },
-                404: {
-                    description: "User not found",
+                401: {
+                    description: "Unauthorized",
                     content: {
                         "application/json": {
                             schema: {
                                 type: "object",
                                 properties: {
-                                    status_code: { type: "integer", example: 404 },
-                                    message: { type: "string", example: "User not found" },
-                                },
-                            },
-                        },
-                    },
+                                    message: { type: "string", example: "Invalid Authorization" }
+                                }
+                            }
+                        }
+                    }
                 },
                 500: {
                     description: "Internal server error",
@@ -511,8 +471,8 @@ const swaggerDocs = {
                         items: {
                             type: 'object',
                             properties: {
-                            message: { type: 'string', example: 'Invalid destination ID format' },
-                            path: { type: 'string', example: 'destinationId' },
+                            message: { type: 'string' },
+                            path: { type: 'string' },
                             },
                         },
                         },
@@ -520,6 +480,19 @@ const swaggerDocs = {
                     },
                 },
                 },
+            },
+            401: {
+                description: "Unauthorized",
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                message: { type: "string", example: "Invalid Authorization" }
+                            }
+                        }
+                    }
+                }
             },
             500: {
                 description: 'Internal server error',
@@ -563,52 +536,47 @@ const swaggerDocs = {
                                                         id: {
                                                             type: 'string',
                                                             format: 'uuid',
-                                                            example: 'e7a2b6bb-9e74-4c77-8d87-d57f6f5035b5',
                                                         },
                                                         name: {
                                                             type: 'string',
-                                                            example: 'Kota Tua',
                                                         },
                                                         description: {
                                                             type: 'string',
-                                                            example:
-                                                                'Kota tua di Jakarta, yang juga bernama Kota Tua, berpusat di Alun-Alun Fatahillah...',
                                                         },
                                                         lat: {
                                                             type: 'number',
                                                             format: 'float',
-                                                            example: -6.1376448,
                                                         },
                                                         lon: {
                                                             type: 'number',
                                                             format: 'float',
-                                                            example: 106.8171245,
                                                         },
                                                         averageRating: {
                                                             type: 'number',
                                                             format: 'float',
-                                                            example: 4.6,
                                                         },
                                                         entryFee: {
                                                             type: 'integer',
                                                             nullable: true,
-                                                            example: null,
+                                                        },
+                                                        visitDurationMinutes: {
+                                                            type: 'integer',
+                                                            nullable: true,
                                                         },
                                                         city: {
                                                             type: 'string',
-                                                            example: 'Jakarta',
                                                         },
-                                                        photoUrl: {
-                                                            type: 'string',
-                                                            example:
-                                                                'https://storage.googleapis.com/bucket-name/images_output/Kota%20Tua/Kota%20Tua_0.jpg',
+                                                        photoUrls: {
+                                                            type: 'array',
+                                                            items: {
+                                                                type: 'string',
+                                                            },
                                                         },
                                                         categories: {
                                                             type: 'array',
                                                             items: {
                                                                 type: 'string',
                                                             },
-                                                            example: ['Budaya'],
                                                         },
                                                     },
                                                 },
@@ -624,6 +592,19 @@ const swaggerDocs = {
                             },
                         },
                     },
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    message: { type: "string", example: "Invalid Authorization" }
+                                }
+                            }
+                        }
+                    }
                 },
             404: {
                 description: 'No favorites found',
@@ -711,8 +692,8 @@ const swaggerDocs = {
                         items: {
                             type: 'object',
                             properties: {
-                            message: { type: 'string', example: 'Invalid category ID' },
-                            path: { type: 'string', example: 'preferences[0]' },
+                            message: { type: 'string' },
+                            path: { type: 'string' },
                             },
                         },
                         },
@@ -720,6 +701,19 @@ const swaggerDocs = {
                     },
                 },
                 },
+            },
+            401: {
+                description: "Unauthorized",
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                message: { type: "string", example: "Invalid Authorization" }
+                            }
+                        }
+                    }
+                }
             },
             500: {
                 description: 'Internal server error',
@@ -788,7 +782,20 @@ const swaggerDocs = {
                         },
                       },
                     },
-                  },                  
+                  },
+                  401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    message: { type: "string", example: "Invalid Authorization" }
+                                }
+                            }
+                        }
+                    }
+                },                  
             404: {
                 description: 'No preferences found',
                 content: {
@@ -848,36 +855,26 @@ const swaggerDocs = {
                         data: {
                         type: "object",
                         properties: {
-                            id: { type: "integer", example: 9 },
-                            name: { type: "string", example: "Pelabuhan Marina" },
-                            description: {
-                            type: "string",
-                            example:
-                                "Pelabuhan Marina Ancol berada di kawasan Taman Impian Jaya Ancol, Jakarta.",
-                            },
-                            lat: { type: "number", format: "float", example: 1.07888 },
-                            lon: { type: "number", format: "float", example: 103.931398 },
-                            averageRating: { type: "number", format: "float", example: 4.4 },
-                            entryFee: { type: "integer", example: 175000 },
-                            city: { type: "string", example: "Jakarta" },
+                            id: { type: "integer" },
+                            name: { type: "string" },
+                            description: { type: "string" },
+                            lat: { type: "number", format: "float" },
+                            lon: { type: "number", format: "float" },
+                            averageRating: { type: "number", format: "float" },
+                            entryFee: { type: "integer" },
+                            visitDurationMinutes: { type: "integer" },
+                            city: { type: "string" },
                             photoUrls: {
                             type: "array",
                             items: {
                                 type: "string",
                             },
-                            example: [
-                                "https://storage.googleapis.com/bucket-name/images_output/Pelabuhan%20Marina/Pelabuhan%20Marina_0.jpg",
-                                "https://storage.googleapis.com/bucket-name/images_output/Pelabuhan%20Marina/Pelabuhan%20Marina_1.jpg",
-                            ],
                             },
                             categories: {
                                 type: "array",
                                 items: {
                                     type: "string",
                                 },
-                                example: [
-                                    "Bahari",
-                            ],
                             },
                         },
                         },
@@ -900,8 +897,8 @@ const swaggerDocs = {
                         items: {
                             type: "object",
                             properties: {
-                            message: { type: "string", example: "Invalid ID format" },
-                            path: { type: "string", example: "id" },
+                            message: { type: "string" },
+                            path: { type: "string" },
                             },
                         },
                         },
@@ -968,14 +965,14 @@ const swaggerDocs = {
                 in: "query",
                 required: false,
                 description: "Page number",
-                schema: { type: "integer", example: 1 },
+                schema: { type: "integer", default: 1 },
             },
             {
                 name: "size",
                 in: "query",
                 required: false,
                 description: "Number of items per page",
-                schema: { type: "integer", example: 2 },
+                schema: { type: "integer", default: 10 },
             },
             ],
             responses: {
@@ -995,33 +992,24 @@ const swaggerDocs = {
                             items: {
                                 type: "object",
                                 properties: {
-                                id: { type: "integer", example: 2 },
-                                name: { type: "string", example: "Kota Tua" },
-                                description: {
-                                    type: "string",
-                                    example: "Kota tua di Jakarta, yang juga bernama Kota Tua, berpusat di Alun-Alun Fatahillah...",
-                                },
-                                lat: { type: "number", format: "float", example: -6.1376448 },
-                                lon: { type: "number", format: "float", example: 106.8171245 },
-                                averageRating: { type: "number", format: "float", example: 4.6 },
-                                entryFee: { type: "integer", example: null },
-                                city: { type: "string", example: "Jakarta" },
+                                id: { type: "integer" },
+                                name: { type: "string" },
+                                description: { type: "string" },
+                                lat: { type: "number", format: "float" },
+                                lon: { type: "number", format: "float" },
+                                averageRating: { type: "number", format: "float" },
+                                entryFee: { type: "integer" },
+                                visitDurationMinutes: { type: "integer" },
+                                city: { type: "string" },
                                 photoUrls: {
                                     type: "array",
                                     items: { type: "string" },
-                                    example: [
-                                    "https://storage.googleapis.com/bucket-name/images_output/Kota%20Tua/Kota%20Tua_0.jpg",
-                                    "https://storage.googleapis.com/bucket-name/images_output/Kota%20Tua/Kota%20Tua_1.jpg",
-                                    ],
                                 },
                                 categories: {
                                     type: "array",
                                     items: {
                                         type: "string",
                                     },
-                                    example: [
-                                        "Budaya",
-                                ],
                                 },
                                 },
                             },
@@ -1056,8 +1044,8 @@ const swaggerDocs = {
                         items: {
                             type: "object",
                             properties: {
-                            message: { type: "string", example: "Invalid page format" },
-                            path: { type: "string", example: "page" },
+                            message: { type: "string" },
+                            path: { type: "string" },
                             },
                         },
                         },
@@ -1119,7 +1107,7 @@ const swaggerDocs = {
             required: false,
             schema: {
               type: 'integer',
-              example: 1,
+              default: 1,
             },
           },
           {
@@ -1129,7 +1117,7 @@ const swaggerDocs = {
             required: false,
             schema: {
               type: 'integer',
-              example: 5,
+              default: 10,
             },
           },
         ],
@@ -1151,17 +1139,17 @@ const swaggerDocs = {
                             type: 'object',
                             properties: {
                                 id: { type: 'string', example: "8f41316c-07e3-43a0-85ac-974fd89d3f0c" },
-                                name: { type: 'string', example: "Wilhelmine Hutama" },
-                                email: { type: 'string', example: "wilhelmine2k@gmail.com" },
-                                waNumber: { type: 'string', example: "6281234567890" },
-                                location: { type: 'string', example: "Jakarta" },
-                                price: { type: 'integer', example: 413776 },
-                                category: { type: 'string', example: "Taman Hiburan" },
-                                categoryGroup: { type: 'string', example: "Wisata Edukasi dan Hiburan" },
-                                verified: { type: 'boolean', example: true },
-                                bio: { type: 'string', example: "Halo! Nama saya Wilhelmine Hazell, dan saya ahli dalam membawa Anda menikmati keseruan tempat-tempat hiburan terbaik di Jakarta. Bersama saya, Anda akan menemukan taman hiburan seru, wahana menarik, dan momen penuh tawa yang cocok untuk keluarga maupun teman-teman." },
-                                gender: { type: 'string', example: "Male" },
-                                photoUrl: { type: 'string', example: "https://storage.googleapis.com/bucket-name/tour_guide/Male/Male%20(49).jpg" },
+                                name: { type: 'string' },
+                                email: { type: 'string' },
+                                waNumber: { type: 'string' },
+                                location: { type: 'string' },
+                                price: { type: 'integer' },
+                                category: { type: 'string' },
+                                categoryGroup: { type: 'string' },
+                                verified: { type: 'boolean' },
+                                bio: { type: 'string' },
+                                gender: { type: 'string' },
+                                photoUrl: { type: 'string' },
                             },
                           },
                         },
@@ -1196,20 +1184,29 @@ const swaggerDocs = {
             },
           },
           400: {
-            description: 'Validation failed',
+            description: "Validation failed",
             content: {
-              'application/json': {
+            "application/json": {
                 schema: {
-                  type: 'object',
-                  properties: {
-                    status_code: { type: 'integer', example: 400 },
-                    message: { type: 'string', example: 'Validation failed' },
-                    errors: { type: 'array', items: { type: 'string' } },
-                  },
+                type: "object",
+                properties: {
+                    status_code: { type: "integer", example: 400 },
+                    message: { type: "string", example: "Validation failed" },
+                    errors: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                        message: { type: "string" },
+                        path: { type: "string" },
+                        },
+                    },
+                    },
                 },
-              },
+                },
             },
-          },
+            },
+        },
           500: {
             description: 'Failed to search tour guides',
             content: {
@@ -1256,18 +1253,18 @@ const swaggerDocs = {
                       type: 'object',
                       properties: {
                         id: { type: 'string', example: "8f41316c-07e3-43a0-85ac-974fd89d3f0c" },
-                        name: { type: 'string', example: "Wilhelmine Hutama" },
-                        email: { type: 'string', example: "wilhelmine2k@gmail.com" },
-                        waNumber: { type: 'string', example: "6281234567890" },
-                        location: { type: 'string', example: "Jakarta" },
-                        price: { type: 'integer', example: 413776 },
-                        category: { type: 'string', example: "Taman Hiburan" },
-                        categoryGroup: { type: 'string', example: "Wisata Edukasi dan Hiburan" },
-                        verified: { type: 'boolean', example: true },
-                        bio: { type: 'string', example: "Halo! Nama saya Wilhelmine Hazell, dan saya ahli dalam membawa Anda menikmati keseruan tempat-tempat hiburan terbaik di Jakarta. Bersama saya, Anda akan menemukan taman hiburan seru, wahana menarik, dan momen penuh tawa yang cocok untuk keluarga maupun teman-teman." },
-                        gender: { type: 'string', example: "Male" },
-                        photoUrl: { type: 'string', example: "https://storage.googleapis.com/bucket-name/tour_guide/Male/Male%20(49).jpg" },
-                      },
+                        name: { type: 'string' },
+                        email: { type: 'string' },
+                        waNumber: { type: 'string' },
+                        location: { type: 'string' },
+                        price: { type: 'integer' },
+                        category: { type: 'string' },
+                        categoryGroup: { type: 'string' },
+                        verified: { type: 'boolean' },
+                        bio: { type: 'string' },
+                        gender: { type: 'string' },
+                        photoUrl: { type: 'string' },
+                    },
                     },
                   },
                 },
@@ -1289,20 +1286,29 @@ const swaggerDocs = {
             },
           },
           400: {
-            description: 'Validation failed',
+            description: "Validation failed",
             content: {
-              'application/json': {
+            "application/json": {
                 schema: {
-                  type: 'object',
-                  properties: {
-                    status_code: { type: 'integer', example: 400 },
-                    message: { type: 'string', example: 'Validation failed' },
-                    errors: { type: 'array', items: { type: 'string' } },
-                  },
+                type: "object",
+                properties: {
+                    status_code: { type: "integer", example: 400 },
+                    message: { type: "string", example: "Validation failed" },
+                    errors: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                        message: { type: "string" },
+                        path: { type: "string" },
+                        },
+                    },
+                    },
                 },
-              },
+                },
             },
-          },
+            },
+        },
           500: {
             description: 'Failed to fetch tour guide details',
             content: {
@@ -1362,16 +1368,16 @@ const swaggerDocs = {
                                                 items: {
                                                     type: 'object',
                                                     properties: {
-                                                        id: { type: 'string', example: '525856db-c331-4ddd-bf20-c1f14e59df3f' },
-                                                        reviewText: { type: 'string', example: 'Amazing destination, highly recommended!' },
+                                                        id: { type: 'string' },
+                                                        reviewText: { type: 'string' },
                                                         rating: { type: 'integer', example: 5 },
                                                         reviewDate: { type: 'string', format: 'date-time', example: '2024-12-03T07:43:15.486Z', nullable: true },
                                                         user: {
                                                             type: 'object',
                                                             properties: {
-                                                                id: { type: 'integer', example: 1 },
-                                                                name: { type: 'string', example: 'John Doe' },
-                                                                profilePictureUrl: { type: 'string', example: 'https://example.com/path/to/profile.jpg', nullable: true },
+                                                                id: { type: 'integer' },
+                                                                name: { type: 'string' },
+                                                                profilePictureUrl: { type: 'string', nullable: true },
                                                             },
                                                         },
                                                     },
@@ -1508,17 +1514,15 @@ const swaggerDocs = {
                                     data: {
                                         type: 'object',
                                         properties: {
-                                            id: { type: 'string', example: 'cdda5e08-c565-46a4-a7d1-30f87f9f4039' },
-                                            userId: { type: 'integer', example: 301 },
-                                            destinationId: { type: 'integer', example: 5 },
-                                            reviewText: { type: 'string', example: 'Great place, enjoyed my visit!' },
-                                            rating: { type: 'integer', example: 4 },
-                                            reviewDate: { type: 'string', format: 'date-time', example: '2024-12-03T07:43:15.486Z' },
+                                            id: { type: 'string' },
+                                            userId: { type: 'integer' },
+                                            destinationId: { type: 'integer' },
+                                            reviewText: { type: 'string' },
+                                            rating: { type: 'integer' },
+                                            reviewDate: { type: 'string', format: 'date-time' },
                                             reviewPhotoUrl: {
                                                 type: 'string',
                                                 nullable: true,
-                                                example:
-                                                    'https://storage.googleapis.com/bucket-name/review-pictures/user-301-review-12345.jpg',
                                                 description: 'URL of the uploaded review photo, if available',
                                             },
                                         },
@@ -1536,11 +1540,24 @@ const swaggerDocs = {
                                 type: 'object',
                                 properties: {
                                     status_code: { type: 'integer', example: 400 },
-                                    message: { type: 'array', items: { type: 'string', example: 'Review text cannot be empty' } },
+                                    message: { type: 'array', items: { type: 'string' } },
                                 },
                             },
                         },
                     },
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    message: { type: "string", example: "Invalid Authorization" }
+                                }
+                            }
+                        }
+                    }
                 },
                 500: {
                     description: 'Internal server error',
@@ -1571,7 +1588,7 @@ const swaggerDocs = {
                         schema: {
                             type: "object",
                             properties: {
-                                name: { type: "string", example: "rahmi travel plann" },
+                                name: { type: "string", example: "travel plan 1" },
                                 startDate: { type: "string", format: "date", example: "2024-12-8" },
                                 endDate: { type: "string", format: "date", example: "2024-12-11" }
                             },
@@ -1593,7 +1610,7 @@ const swaggerDocs = {
                                         type: "object",
                                         properties: {
                                             id: { type: "string", example: "0c124619-df40-412b-a823-89fc38691bcf" },
-                                            name: { type: "string", example: "rahmi travel plann" },
+                                            name: { type: "string", example: "travel plan 1" },
                                             createdAt: { type: "string", format: "date-time", example: "2024-12-08T07:01:06.028Z" },
                                             startDate: { type: "string", format: "date-time", example: "2024-12-08T00:00:00.000Z" },
                                             endDate: { type: "string", format: "date-time", example: "2024-12-11T00:00:00.000Z" },
@@ -1620,6 +1637,19 @@ const swaggerDocs = {
                                             type: "string"
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    message: { type: "string", example: "Invalid Authorization" }
                                 }
                             }
                         }
@@ -1661,7 +1691,7 @@ const swaggerDocs = {
                                             type: "object",
                                             properties: {
                                                 id: { type: "string", example: "0c124619-df40-412b-a823-89fc38691bcf" },
-                                                name: { type: "string", example: "rahmi travel plann" },
+                                                name: { type: "string", example: "travel plan 1" },
                                                 createdAt: { type: "string", format: "date-time", example: "2024-12-08T07:01:06.028Z" },
                                                 startDate: { type: "string", format: "date-time", example: "2024-12-08T00:00:00.000Z" },
                                                 endDate: { type: "string", format: "date-time", example: "2024-12-11T00:00:00.000Z" },
@@ -1682,8 +1712,7 @@ const swaggerDocs = {
                             schema: {
                                 type: "object",
                                 properties: {
-                                    status_code: { type: "integer", example: 401 },
-                                    message: { type: "string", example: "Unauthorized" }
+                                    message: { type: "string", example: "Invalid Authorization" }
                                 }
                             }
                         }
@@ -1697,7 +1726,7 @@ const swaggerDocs = {
                                 type: "object",
                                 properties: {
                                     status_code: { type: "integer", example: 500 },
-                                    message: { type: "string", example: "Failed to fetch travel plans" }
+                                    message: { type: "string", example: "Failed to fetch plans" }
                                 }
                             }
                         }
@@ -1765,6 +1794,19 @@ const swaggerDocs = {
                         }
                     }
                 },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    message: { type: "string", example: "Invalid Authorization" }
+                                }
+                            }
+                        }
+                    }
+                },
                 500: {
                     description: "Internal server error",
                     content: {
@@ -1773,7 +1815,7 @@ const swaggerDocs = {
                                 type: "object",
                                 properties: {
                                     status_code: { type: "integer", example: 500 },
-                                    message: { type: "string", example: "Failed to add destination to plan" }
+                                    message: { type: "string", example: "Failed to add plan destination" }
                                 }
                             }
                         }
@@ -1822,17 +1864,134 @@ const swaggerDocs = {
                                                         id: { type: "integer" },
                                                         name: { type: "string" },
                                                         description: { type: "string" },
-                                                        averageRating: { type: "number" },
                                                         lat: { type: "number" },
                                                         lon: { type: "number" },
+                                                        averageRating: { type: "number" },
                                                         entryFee: { type: "integer", nullable: true },
                                                         visitDurationMinutes: { type: "integer", nullable: true },
-                                                        cityId: { type: "integer" }
+                                                        cityId: { type: "string" },
+                                                        photoUrls: {
+                                                            type: 'array',
+                                                            items: {
+                                                                type: 'string',
+                                                            },
+                                                        },
+                                                        categories: {
+                                                            type: 'array',
+                                                            items: {
+                                                                type: 'string',
+                                                            },
+                                                        },
                                                     }
                                                 }
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    message: { type: "string", example: "Invalid Authorization" }
+                                }
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: "Travel plan not found",
+                    content: {
+                      "application/json": {
+                        schema: {
+                          type: "object",
+                          properties: {
+                            status_code: { type: "integer", example: 404 },
+                            message: { type: "string", example: "No destinations found in the plan" }
+                          }
+                        },
+                        examples: {
+                          "noDestinationsFound": {
+                            summary: "No destinations found in the plan",
+                            value: {
+                              status_code: 404,
+                              message: "No destinations found in the plan"
+                            }
+                          },
+                          "planNotFound": {
+                            summary: "Plan not found",
+                            value: {
+                              status_code: 404,
+                              message: "Plan not found"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                500: {
+                    description: "Internal server error",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 500 },
+                                    message: { type: "string", example: "Failed to fetch plan destinations" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "/travel-plan/{id}": {
+        delete: {
+            summary: "Delete a travel plan",
+            tags: ["Travel Plan"],
+            security: [{ jwtAuth: [] }],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    required: true,
+                    description: "ID of the travel plan",
+                    schema: {
+                        type: "string",
+                        format: "uuid"
+                    }
+                }
+            ],
+            responses: {
+                200: {
+                    description: "Plan deleted successfully",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    status_code: { type: "integer", example: 200 },
+                                    message: { type: "string", example: "Plan deleted successfully" }
+                                }
+                            }
+                        }
+                    },
+                },
+                401: {
+                    description: "Unauthorized",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    message: { type: "string", example: "Invalid Authorization" }
                                 }
                             }
                         }
@@ -1846,7 +2005,7 @@ const swaggerDocs = {
                                 type: "object",
                                 properties: {
                                     status_code: { type: "integer", example: 404 },
-                                    message: { type: "string", example: "Travel plan not found" }
+                                    message: { type: "string", example: "Plan not found or not authorized" }
                                 }
                             }
                         }
@@ -1860,7 +2019,7 @@ const swaggerDocs = {
                                 type: "object",
                                 properties: {
                                     status_code: { type: "integer", example: 500 },
-                                    message: { type: "string", example: "Failed to fetch destinations" }
+                                    message: { type: "string", example: "Failed to delete plan" }
                                 }
                             }
                         }
@@ -1868,7 +2027,265 @@ const swaggerDocs = {
                 }
             }
         }
-    }
+    },
+    "/recommendation/normal-hybrid": {
+        get: {
+            summary: "Get normal hybrid recommendation",
+            tags: ["Recommendation"],
+            parameters: [
+            {
+                name: "page",
+                in: "query",
+                description: "Page number for pagination",
+                required: false,
+                schema: {
+                type: "integer",
+                default: 1,
+                },
+            },
+            {
+                name: "size",
+                in: "query",
+                description: "Number of items per page",
+                required: false,
+                schema: {
+                type: "integer",
+                default: 5,
+                },
+            },
+            ],
+            responses: {
+            200: {
+                description: "Successful response with paginated recommendations",
+                content: {
+                "application/json": {
+                    schema: {
+                    type: "object",
+                    properties: {
+                        status_code: {
+                        type: "integer",
+                        description: "Response status code",
+                        },
+                        data: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                            id: {
+                                type: "integer",
+                                description: "Destination ID",
+                            },
+                            name: {
+                                type: "string",
+                                description: "Destination name",
+                            },
+                            entryFee: {
+                                type: "integer",
+                                description: "Entry fee for the destination",
+                            },
+                            cityId: {
+                                type: "integer",
+                                description: "ID of the city where the destination is located",
+                            },
+                            photos: {
+                                type: "array",
+                                items: {
+                                type: "string",
+                                description: "URL of the photo",
+                                },
+                            },
+                            averageRating: {
+                                type: "number",
+                                format: "float",
+                                description: "Average rating of the destination",
+                            },
+                            },
+                        },
+                        },
+                        pagination: {
+                        type: "object",
+                        properties: {
+                            currentPage: {
+                            type: "integer",
+                            description: "Current page number",
+                            },
+                            pageSize: {
+                            type: "integer",
+                            description: "Number of items per page",
+                            },
+                            totalItems: {
+                            type: "integer",
+                            description: "Total number of items",
+                            },
+                            totalPages: {
+                            type: "integer",
+                            description: "Total number of pages available",
+                            },
+                        },
+                        },
+                    },
+                    },
+                },
+                },
+            },
+            401: {
+                description: "Unauthorized",
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                message: { type: "string", example: "Invalid Authorization" }
+                            }
+                        }
+                    }
+                }
+            },
+            500: {
+                description: "Internal server error",
+                content: {
+                "application/json": {
+                    schema: {
+                    type: "object",
+                    properties: {
+                        status_code: {
+                        type: "integer",
+                        description: "Response status code",
+                        },
+                        message: {
+                        type: "string",
+                        description: "Error message",
+                        },
+                        error: {
+                        type: "string",
+                        description: "Detailed error message",
+                        },
+                    },
+                    },
+                },
+                },
+            },
+        },
+        },
+    },
+    "/recommendation/distance-hybrid/{destId}": {
+        get: {
+            summary: "Get distance hybrid recommendation",
+            tags: ["Recommendation"],
+            parameters: [
+            {
+                name: "destId",
+                in: "path",
+                required: true,
+                schema: {
+                type: "string",
+                },
+                description: "Destination ID",
+            },
+            {
+                name: "page",
+                in: "query",
+                description: "Page number for pagination",
+                required: false,
+                schema: {
+                type: "integer",
+                default: 1,
+                },
+            },
+            {
+                name: "size",
+                in: "query",
+                description: "Number of items per page",
+                required: false,
+                schema: {
+                type: "integer",
+                default: 5,
+                },
+            },
+            ],
+            responses: {
+            200: {
+                description: "Successful response",
+                content: {
+                "application/json": {
+                    schema: {
+                    type: "object",
+                    properties: {
+                        status_code: {
+                        type: "integer",
+                        example: 200,
+                        },
+                        data: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                            id: { type: "integer" },
+                            name: { type: "string" },
+                            entryFee: { type: "integer", nullable: true },
+                            cityId: { type: "integer" },
+                            photos: {
+                                type: "array",
+                                items: { type: "string" },
+                            },
+                            averageRating: { type: "number" },
+                            },
+                        },
+                        },
+                        pagination: {
+                        type: "object",
+                        properties: {
+                            currentPage: { type: "integer" },
+                            pageSize: { type: "integer" },
+                            totalItems: { type: "integer" },
+                            totalPages: { type: "integer" },
+                        },
+                        },
+                    },
+                    },
+                },
+                },
+            },
+            401: {
+                description: "Unauthorized",
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                message: { type: "string", example: "Invalid Authorization" }
+                            }
+                        }
+                    }
+                }
+            },
+            500: {
+                description: "Internal server error",
+                content: {
+                "application/json": {
+                    schema: {
+                    type: "object",
+                    properties: {
+                        status_code: {
+                        type: "integer",
+                        description: "Response status code",
+                        },
+                        message: {
+                        type: "string",
+                        description: "Error message",
+                        },
+                        error: {
+                        type: "string",
+                        description: "Detailed error message",
+                        },
+                    },
+                    },
+                },
+                },
+            },
+            },
+        },
+        },
 },
 components: {
     securitySchemes: {
@@ -1883,9 +2300,10 @@ components: {
     { name: "Auth", description: "Handle user authentication" },
     { name: "User", description: "Manage user data and preferences" },
     { name: "Destination", description: "Manage destinations and related info" },
-    { name: "Tour Guide", description: "Information about available tour guides" },
+    { name: "Travel Plan", description: "Create and manage travel plans" },
+    { name: "Recommendation", description: "Get personalized destination recommendations" },
     { name: "Review", description: "Submit and retrieve user reviews" },
-    { name: "Travel Plan", description: "Create and manage travel plans" }
+    { name: "Tour Guide", description: "Information about available tour guides" }
     ]
   };
   
