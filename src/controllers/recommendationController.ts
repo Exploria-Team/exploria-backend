@@ -141,6 +141,13 @@ export const getDistanceHybridRecommendation = async (
         const userId = req.user.id <= 300 ? req.user.id : 0;
         const destId = req.params.destId;
 
+        // Extract pagination parameters from the query
+        const { page, size } = req.query;
+        const pageNumber = parseInt(page as string, 10) || 1;  // Default to 1 if no page provided
+        const pageSize = parseInt(size as string, 10) || 5;    // Default to 5 items per page if no size provided
+
+        const offset = (pageNumber - 1) * pageSize;
+
         const reviews = await prisma.review.findMany({
             where: { userId },
             include: {
@@ -167,11 +174,11 @@ export const getDistanceHybridRecommendation = async (
         const categoryCount = Array(9).fill(0);
 
         const preferences = await prisma.preference.findMany({
-            where: {userId: req.user.id},
-            select: {categoryId: true}
+            where: { userId: req.user.id },
+            select: { categoryId: true },
         });
 
-        for(const preference of preferences) {
+        for (const preference of preferences) {
             categorySum[preference.categoryId - 1] = 5;
             categoryCount[preference.categoryId - 1] = 1;
         }
@@ -196,9 +203,10 @@ export const getDistanceHybridRecommendation = async (
             }
         );
 
-        const result = [];
+        // Paginate the recommendations
+        const recommendations = response.data.recommendations.slice(offset, offset + pageSize);
 
-        const recommendations = response.data.recommendations.slice(0, 5);
+        const result = [];
 
         for (const dest_id of recommendations) {
             const destination = await prisma.destination.findFirst({
@@ -227,15 +235,21 @@ export const getDistanceHybridRecommendation = async (
                     entryFee: destination.entryFee,
                     cityId: destination.cityId,
                     photos: photoUrls, // Set photos as an array of strings (photoUrls)
-                    averageRating: destination.averageRating
+                    averageRating: destination.averageRating,
                 });
             }
         }
 
-        // Send the response from the FastAPI server to the client
+        // Send the paginated response to the client
         res.status(200).json({
             status_code: 200,
             data: result,
+            pagination: {
+                currentPage: pageNumber,
+                pageSize: pageSize,
+                totalItems: response.data.recommendations.length,
+                totalPages: Math.ceil(response.data.recommendations.length / pageSize),
+            },
         });
     } catch (error) {
         console.error(error.message || error);
