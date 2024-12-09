@@ -1,5 +1,3 @@
-// All The Authorization Routes Like SignUp Login Me are defined Here
-
 import { PrismaClient, User } from "@prisma/client";
 import { Request, Response } from "express";
 import { compareSync, hashSync } from "bcrypt";

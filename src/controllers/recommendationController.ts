@@ -12,10 +12,9 @@ export const getNormalHybridRecommendation = async (
     try {
         const userId = req.user.id <= 300 ? req.user.id : 0;
 
-        // Extract pagination parameters from the query
         const { page, size } = req.query;
-        const pageNumber = parseInt(page as string, 10) || 1;  // Default to 1 if no page provided
-        const pageSize = parseInt(size as string, 10) || 5;    // Default to 5 items per page if no size provided
+        const pageNumber = parseInt(page as string, 10) || 1;  
+        const pageSize = parseInt(size as string, 10) || 5;    
 
         const offset = (pageNumber - 1) * pageSize;
 
@@ -73,7 +72,6 @@ export const getNormalHybridRecommendation = async (
             }
         );
 
-        // Paginate the recommendations
         const recommendations = response.data.recommendations.slice(offset, offset + pageSize);
 
         const result = [];
@@ -96,22 +94,19 @@ export const getNormalHybridRecommendation = async (
             });
 
             if (destination) {
-                // Transform photos to an array of photoUrls
                 const photoUrls: string[] = destination.photos.map((photo) => photo.photoUrl);
                 
-                // Push the transformed destination object to the result array
                 result.push({
                     id: destination.id,
                     name: destination.name,
                     entryFee: destination.entryFee,
                     cityId: destination.cityId,
-                    photos: photoUrls, // Set photos as an array of strings (photoUrls)
+                    photos: photoUrls,
                     averageRating: destination.averageRating
                 });
             }
         }
 
-        // Send the paginated response to the client
         res.status(200).json({
             status_code: 200,
             data: result,
@@ -141,10 +136,9 @@ export const getDistanceHybridRecommendation = async (
         const userId = req.user.id <= 300 ? req.user.id : 0;
         const destId = req.params.destId;
 
-        // Extract pagination parameters from the query
         const { page, size } = req.query;
-        const pageNumber = parseInt(page as string, 10) || 1;  // Default to 1 if no page provided
-        const pageSize = parseInt(size as string, 10) || 5;    // Default to 5 items per page if no size provided
+        const pageNumber = parseInt(page as string, 10) || 1;
+        const pageSize = parseInt(size as string, 10) || 5;
 
         const offset = (pageNumber - 1) * pageSize;
 
@@ -203,7 +197,6 @@ export const getDistanceHybridRecommendation = async (
             }
         );
 
-        // Paginate the recommendations
         const recommendations = response.data.recommendations.slice(offset, offset + pageSize);
 
         const result = [];
@@ -226,21 +219,18 @@ export const getDistanceHybridRecommendation = async (
             });
 
             if (destination) {
-                // Transform photos to an array of photoUrls
                 const photoUrls: string[] = destination.photos.map((photo) => photo.photoUrl);
-                // Push the transformed destination object to the result array
                 result.push({
                     id: destination.id,
                     name: destination.name,
                     entryFee: destination.entryFee,
                     cityId: destination.cityId,
-                    photos: photoUrls, // Set photos as an array of strings (photoUrls)
+                    photos: photoUrls,
                     averageRating: destination.averageRating,
                 });
             }
         }
 
-        // Send the paginated response to the client
         res.status(200).json({
             status_code: 200,
             data: result,

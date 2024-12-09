@@ -107,11 +107,10 @@ export const createReview = async (req: Request, res: Response) => {
                 reviewText,
                 rating,
                 reviewDate: new Date(),
-                reviewPhotoUrl,  // Simpan URL foto jika ada
+                reviewPhotoUrl,
             },
         });
 
-        // update Rating
         const reviews = await prisma.review.findMany({
             where: {destinationId}
         });
@@ -124,10 +123,10 @@ export const createReview = async (req: Request, res: Response) => {
 
         const updatedDestination = await prisma.destination.update({
             where: {
-                id: destinationId, // Specific ID to update
+                id: destinationId,
             },
             data: {
-                averageRating: cnt == 0 ? 0 : parseFloat((sum / cnt).toFixed(1)), // New value for the column
+                averageRating: cnt == 0 ? 0 : parseFloat((sum / cnt).toFixed(1)),
             },
         });
 
