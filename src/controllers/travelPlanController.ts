@@ -113,13 +113,63 @@ export const getPlanDestinations = async (req: Request, res: Response) => {
         const planDestinations = await prisma.planDestination.findMany({
             where: { planId },
             include: {
-                destination: true,
+                destination: {
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true,
+                        lat: true,
+                        lon: true,
+                        averageRating: true,
+                        entryFee: true,
+                        visitDurationMinutes: true,
+                        city: {
+                            select: { name: true },
+                        },
+                        photos: {
+                            take: 1,
+                            select: { photoUrl: true },
+                        },
+                        categories: {
+                            select: {
+                                category: {
+                                    select: { name: true },
+                                },
+                            },
+                        },
+                    },
+                },
             },
         });
 
+        if (!planDestinations.length) {
+            return res.status(404).json({
+                status_code: 404,
+                message: "No destinations found in the plan",
+            });
+        }
+
         res.status(200).json({
             status_code: 200,
-            data: planDestinations,
+            data: planDestinations.map((planDestination) => ({
+                id: planDestination.id,
+                planId: planDestination.planId,
+                destinationId: planDestination.destinationId,
+                date: planDestination.date,
+                destination: {
+                    id: planDestination.destination.id,
+                    name: planDestination.destination.name,
+                    description: planDestination.destination.description,
+                    lat: planDestination.destination.lat,
+                    lon: planDestination.destination.lon,
+                    averageRating: planDestination.destination.averageRating,
+                    entryFee: planDestination.destination.entryFee,
+                    visitDurationMinutes: planDestination.destination.visitDurationMinutes,
+                    city: planDestination.destination.city.name,
+                    photoUrls: planDestination.destination.photos.map((photo) => photo.photoUrl),
+                    categories: planDestination.destination.categories.map((categoryRelation) => categoryRelation.category.name),
+                },
+            })),
         });
     } catch (error) {
         console.error("Error fetching Plan Destinations", error);

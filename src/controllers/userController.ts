@@ -146,7 +146,7 @@ export const getFavorites = async (req: Request, res: Response) => {
                     entryFee: favorite.destination.entryFee,
                     visitDurationMinutes: favorite.destination.visitDurationMinutes,
                     city: favorite.destination.city.name,
-                    photoUrl: favorite.destination.photos[0].photoUrl,
+                    photoUrls: favorite.destination.photos.map((photo) => photo.photoUrl),
                     categories: favorite.destination.categories.map((categoryRelation) => categoryRelation.category.name),
                 },
                 date: favorite.date,
