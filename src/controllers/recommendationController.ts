@@ -45,13 +45,13 @@ export const getNormalHybridRecommendation = async (
         const categoryCount = Array(9).fill(0);
 
         const preferences = await prisma.preference.findMany({
-            where: {userId},
+            where: {userId: req.user.id},
             select: {categoryId: true}
         });
 
         for(const preference of preferences) {
-            categorySum[preference.categoryId] = 5;
-            categoryCount[preference.categoryId] = 1;
+            categorySum[preference.categoryId - 1] = 5;
+            categoryCount[preference.categoryId - 1] = 1;
         }
 
         formattedReviews.forEach(({ rating, categories }) => {
@@ -63,7 +63,7 @@ export const getNormalHybridRecommendation = async (
 
         const categoryAvg = categorySum.map((sum, index) =>
             categoryCount[index] === 0 ? 0 : sum / categoryCount[index]
-        );
+        ); 
 
         const response = await axios.post(
             `${ML_API_URL}/recommendation/normal-hybrid`,
@@ -167,13 +167,13 @@ export const getDistanceHybridRecommendation = async (
         const categoryCount = Array(9).fill(0);
 
         const preferences = await prisma.preference.findMany({
-            where: {userId},
+            where: {userId: req.user.id},
             select: {categoryId: true}
         });
 
         for(const preference of preferences) {
-            categorySum[preference.categoryId] = 5;
-            categoryCount[preference.categoryId] = 1;
+            categorySum[preference.categoryId - 1] = 5;
+            categoryCount[preference.categoryId - 1] = 1;
         }
 
         formattedReviews.forEach(({ rating, categories }) => {
