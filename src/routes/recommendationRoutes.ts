@@ -5,7 +5,7 @@ import { getNormalHybridRecommendation, getDistanceHybridRecommendation } from "
 
 const recommendationRoutes = Router();
 
-recommendationRoutes.get("/normal-hybrid", getNormalHybridRecommendation);
+recommendationRoutes.get("/normal-hybrid", authMiddleware, getNormalHybridRecommendation);
 recommendationRoutes.get("/distance-hybrid/:destId", authMiddleware, getDistanceHybridRecommendation);
 
 export default recommendationRoutes;
