@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const storage = new Storage();
 
-const bucket = storage.bucket('exploria-1');
+const bucket = storage.bucket('exploria-bucket');
 
 export const uploadFile = (file: Express.Multer.File, userId: Number, folder: string) => {
   return new Promise<string>((resolve, reject) => {
