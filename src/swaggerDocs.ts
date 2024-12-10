@@ -8,6 +8,15 @@ const swaggerDocs = {
           url: "http://localhost:3000/api/v1",
           description: "Local",
         },
+        {
+            url: "{host}/api/v1",
+            description: "Custom",
+            variables: {
+              host: {
+                description: "Base URL for the API",
+              },
+            },
+          },
       ],
     paths: {
       "/auth/signup": {
@@ -2031,6 +2040,7 @@ const swaggerDocs = {
     "/recommendation/normal-hybrid": {
         get: {
             summary: "Get normal hybrid recommendation",
+            security: [{ jwtAuth: [] }],
             tags: ["Recommendation"],
             parameters: [
             {
@@ -2171,6 +2181,7 @@ const swaggerDocs = {
     "/recommendation/distance-hybrid/{destId}": {
         get: {
             summary: "Get distance hybrid recommendation",
+            security: [{ jwtAuth: [] }],
             tags: ["Recommendation"],
             parameters: [
             {
