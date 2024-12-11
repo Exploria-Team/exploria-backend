@@ -2,18 +2,29 @@ const swaggerDocs = {
     openapi: "3.0.0",
     info: {
       title: "Exploria API Documentation",
+      version: "1.0.0",
+        contact: {
+            name: "Exploria Github Repository",
+            url: "https://github.com/Exploria-Team/exploria-backend",
+        },
+    },
+    externalDocs: {
+        description: "Machine Learning API Documentation",
+        url: "https://exploria-ml-api-14669887025.asia-southeast2.run.app/docs#/",
     },
     servers: [
         {
-          url: "http://localhost:3000/api/v1",
-          description: "Local",
+            url: "https://exploria-backend-14669887025.asia-southeast2.run.app/api/v1",
         },
         {
-            url: "{host}/api/v1",
+          url: "http://localhost:3000/api/v1",
+        },
+        {
+            url: "{host}",
             description: "Custom",
             variables: {
               host: {
-                description: "Base URL for the API",
+                description: "Custom URL for the API",
               },
             },
           },
