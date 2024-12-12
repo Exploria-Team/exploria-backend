@@ -3,7 +3,7 @@
 Exploria is a RESTful API built with Express.js designed to provide a modular and scalable backend for handling CRUD operations, authentication, database management, and API documentation using Swagger. This API is suitable for modern applications requiring robust server-side communication and data management.
 
 ## Pre-requirements
-- Yarn Package Manager
+- NPM Package Manager
 - PostgreSQL Database
 - Node.js version 18 or later
 
