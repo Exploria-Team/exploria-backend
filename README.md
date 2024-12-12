@@ -38,6 +38,7 @@ To achieve these goals, we use:
 - *Express.js*: For building scalable APIs, managing routing, middleware, and user interaction logic.
 - *Prisma ORM*: For intuitive and type-safe interactions with the PostgreSQL database, simplifying database management.
 - *PostgreSQL*: As the robust, scalable, and feature-rich relational database for structured data storage and retrieval.
+- *FastAPI*: For building high-performance machine learning APIs
 
 ## About the Team
 
