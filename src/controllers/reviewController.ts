@@ -62,6 +62,7 @@ export const getReviews = async (req: Request, res: Response) => {
             reviewText: review.reviewText,
             rating: review.rating,
             reviewDate: review.reviewDate,
+            reviewPhotoUrl: review.reviewPhotoUrl,
             user: {
                 id: review.user.id,
                 name: review.user.name,
