@@ -28,7 +28,9 @@ export const getReviews = async (req: Request, res: Response) => {
                 where: { destinationId: destinationIdInt },
                 skip: offset,
                 take: pageSize,
-                orderBy: { reviewDate: "desc" },
+                orderBy: [
+                    { reviewDate: { sort: 'desc', nulls: 'last' } }
+                ],
                 include: {
                     user: {
                         select: {
