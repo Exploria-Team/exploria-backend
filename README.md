@@ -59,6 +59,9 @@ http://localhost:8080/api-docs
 - **Node.js** - Runtime Environment
 - **Docker** - Container Management
 
+### Others
+- [ERD](https://drive.google.com/file/d/1eOKJ4T70bUPKdHVbJc8rkbuCIXtgjWoH/view?usp=sharing)
+- [Architecture Diagram](https://miro.com/app/board/uXjVL750eMA=/?share_link_id=634022515178)
 ## About the Team
 
 Exploria’s Cloud Computing team consists of passionate individuals from Bangkit 2024 Batch 2:
