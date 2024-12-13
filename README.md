@@ -1,3 +1,5 @@
+![image](https://github.com/user-attachments/assets/a9b8f9d6-94a7-43dd-b6f4-e24fab2facf1)
+
 # Exploria Backend API
 
 Exploria is a RESTful API built with Express.js designed to provide a modular and scalable backend for handling CRUD operations, authentication, database management, and API documentation using Swagger. This API is suitable for modern applications requiring robust server-side communication and data management.
